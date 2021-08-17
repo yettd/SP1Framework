@@ -6,6 +6,15 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+<<<<<<< Updated upstream
+=======
+#include "entity.h"
+#include "player.h"
+#include "collision.h"
+
+float x = 0;
+float y = 0;
+>>>>>>> Stashed changes
 
 double  g_dElapsedTime;
 double  g_dDeltaTime;
@@ -236,26 +245,45 @@ void moveCharacter()
         //Beep(1440, 30);
         g_sChar.m_cLocation.Y--;       
     }
+<<<<<<< Updated upstream
     if (g_skKeyEvent[K_LEFT].keyReleased && g_sChar.m_cLocation.X > 0)
     {
         //Beep(1440, 30);
         g_sChar.m_cLocation.X--;        
+=======
+    else if (g_skKeyEvent[K_DOWN].keyDown && player.getCoordY() < g_Console.getConsoleSize().Y - 1)
+    {
+        player.movement(2);
+>>>>>>> Stashed changes
     }
     if (g_skKeyEvent[K_DOWN].keyReleased && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
     {
+<<<<<<< Updated upstream
         //Beep(1440, 30);
         g_sChar.m_cLocation.Y++;        
+=======
+        player.movement(3);
+>>>>>>> Stashed changes
     }
     if (g_skKeyEvent[K_RIGHT].keyReleased && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
     {
+<<<<<<< Updated upstream
         //Beep(1440, 30);
         g_sChar.m_cLocation.X++;        
+=======
+        player.movement(4);
+>>>>>>> Stashed changes
     }
     if (g_skKeyEvent[K_SPACE].keyReleased)
     {
         g_sChar.m_bActive = !g_sChar.m_bActive;        
     }
-
+    // collision detection here
+    // temp max entities 10
+    /*for (int i = 0; i < 10; i++)
+    {
+        if (checkCollide(player,)) break
+    }*/
    
 }
 void processUserInput()
