@@ -9,7 +9,6 @@ enemy::enemy()
 	setRandY();
 
 	setspeed(0.1);
-	setRandAI();
 
 
 	mx = 0;
@@ -115,7 +114,8 @@ void enemy::getDirfromPlayer(int x, int y)
 	if (disY < 0)
 	{
 		movement(1);
-	}	if (disY > 0)
+	}	
+	if (disY > 0)
 	{
 		movement(2);
 	}

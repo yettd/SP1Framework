@@ -89,10 +89,9 @@ void rechargeFire();
 
 void renderEnemy();
 void spawnEnemy();
-void moveEnemy();
 void destroyEnemy(int i);
-
 void moveEnemy();
+
 
 
 #endif // _GAME_H
