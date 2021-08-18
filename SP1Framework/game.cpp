@@ -118,6 +118,8 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
         break;
     case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
         break;
+    case S_LOSE: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
+        break;
     case S_UPGRADESCREEN: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
         break;
     }
@@ -264,6 +266,8 @@ void update(double dt)
         case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
             break;
         case S_GAME: updateGame();// gameplay logic when we are in the game
+            break;
+        case S_LOSE:
             break;
         case S_UPGRADESCREEN: upgradeScreenInput();
             break;
@@ -450,6 +454,8 @@ void render()
         break;
     case S_GAME: renderGame();
         break;
+    case S_LOSE: renderLoseScreen();
+        break;
     case S_UPGRADESCREEN: renderUpgradeScreen();
         break;
     }
@@ -536,6 +542,21 @@ void renderUpgradeScreen()
     c.X = g_Console.getConsoleSize().X / 2 - 9;
     g_Console.writeToBuffer(c, "2. Increase Movement Speed", 0x09);
 }
+
+void renderLoseScreen()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.Y /= 3;
+    c.X = c.X / 2 - 9;
+    g_Console.writeToBuffer(c, "YOU LOSE", 0x03);
+    c.Y += 1;
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, "SCORE: ", 0x09);
+    c.Y += 1;
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, "PRESS SPACE TO PLAY AGAIN", 0x09);
+}
+
 void renderMap()
 {
     //// Set up sample colours, and output shadings
