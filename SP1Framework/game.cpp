@@ -359,7 +359,14 @@ void moveEnemy()
 {
     for (int i = 0; i < e.size(); i++)
     {
+        if (e[i]->getAI() == 0)
         e[i]->getDirfromPlayer(player.getCoordX(), player.getCoordY());
+        else if (e[i]->getAI() == 1)
+        {
+            e[i]->getDirfromPlayer(player.getCoordX(), player.getCoordY());
+            //Shoot bullet
+        }
+        else if (e[i]->getAI() == 2){}
     }
 }
 

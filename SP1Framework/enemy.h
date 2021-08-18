@@ -13,6 +13,7 @@ public:
     void setRandX();
     void setRandY();
     void getDirfromPlayer(int x,int y);
-
+    int getAI();
+    void setAI();
 };
 
