@@ -7,6 +7,7 @@ enemy::enemy()
 	setSym(79);
 	setRandX();
 	setRandY();
+	setspeed(0.1);
 	mx = 0;
 	my = 0;
 }
@@ -75,6 +76,8 @@ void enemy::movement(int dir)
 	}
 }
 
+ 
+
 void enemy::setRandX()
 {
 	int randomNumber;
@@ -93,4 +96,27 @@ void enemy::setRandY()
 		randomNumber = (rand() % 25) + 1;
 	}
 	setCoordY(randomNumber);
+}
+
+void enemy::getDirfromPlayer(int x, int y)
+{
+	int disX = x - getCoordX();
+	int disY = y - getCoordY();
+
+	if (disX > 0)
+	{
+		movement(4);
+	}
+	if (disX < 0)
+	{
+		movement(3);
+	}
+	if (disY < 0)
+	{
+		movement(1);
+	}	if (disY > 0)
+	{
+		movement(2);
+	}
+
 }

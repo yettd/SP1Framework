@@ -10,6 +10,7 @@ public:
     void movement(int dir);
     void setRandX();
     void setRandY();
+    void getDirfromPlayer(int x,int y);
 
 };
 

@@ -50,6 +50,7 @@ void init( void )
     player.setCoordX(g_Console.getConsoleSize().X / 2);
     player.setCoordY(g_Console.getConsoleSize().Y / 2);
     player.setm_bActive(true);
+    e.push_back(new enemy);
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -222,7 +223,7 @@ void displayScored()
     std::string s;
     std::ostringstream ss;
     int WS= floor(score);
-    WS = b.size();
+   // WS = b.size();
     ss <<"SCORE : "<< std::to_string(WS);
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
@@ -274,6 +275,7 @@ void updateGame()       // gameplay logic
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
+    moveEnemy();
     moveBullet();
     
 }
@@ -320,6 +322,14 @@ void moveCharacter()
 void createBullet()
 {
     b.push_back(new bullet(player.getCoordX(), player.getCoordY(), lastface));
+}
+void moveEnemy()
+{
+    for (int i = 0; i < e.size(); i++)
+    {
+        e[i]->getDirfromPlayer(player.getCoordX(), player.getCoordY());
+       
+    }
 }
 
 void moveBullet()

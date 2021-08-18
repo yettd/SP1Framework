@@ -90,5 +90,7 @@ void rechargeFire();
 void renderEnemy();
 void spawnEnemy();
 
+void moveEnemy();
+
 
 #endif // _GAME_H
