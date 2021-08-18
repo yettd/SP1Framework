@@ -85,6 +85,8 @@ void moveBullet();
 void createBullet();
 void destroyBullet(int i);
 
+void rechargeFire();
+
 void renderEnemy();
 void spawnEnemy();
 void moveEnemy();

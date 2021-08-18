@@ -16,7 +16,7 @@ int face = 1;
 int lastface = 1;
 double  g_dElapsedTime;
 double  g_dDeltaTime;
-float score=0;
+float score = 0;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
@@ -49,7 +49,7 @@ void init( void )
     player.setspeed(0.1);
     player.setCoordX(g_Console.getConsoleSize().X / 2);
     player.setCoordY(g_Console.getConsoleSize().Y / 2);
-    player.setm_bActive(false);
+    player.setm_bActive(true);
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -142,6 +142,18 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
         break;
     case S_GAME: gameplayMouseHandler(mouseEvent); // handle gameplay mouse event
         break;
+    }
+}
+void rechargeFire()
+{
+    if (player.getm_activr() == false)
+    {
+        player.SetFireC(player.getFireC() + 0.01);
+        if (player.getFireC() >= player.getFireRate())
+        {
+            player.setm_bActive(true);
+            player.SetFireC(0);
+        }
     }
 }
 
@@ -261,7 +273,7 @@ void updateGame()       // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
-                        // sound can be played here too.
+    rechargeFire();          // sound can be played here too.
     moveBullet();
     spawnEnemy();
     moveEnemy();
@@ -295,9 +307,11 @@ void moveCharacter()
     {
         lastface = face;
     }
-    if (g_skKeyEvent[K_SPACE].keyDown)
+    if (g_skKeyEvent[K_SPACE].keyDown && player.getm_activr() == true)
     {
         createBullet();
+        player.setm_bActive(false);
+
     }
  
     face = 0;
