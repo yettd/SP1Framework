@@ -87,6 +87,8 @@ void destroyBullet(int i);
 
 void renderEnemy();
 void spawnEnemy();
+void moveEnemy();
+void destroyEnemy(int i);
 
 
 #endif // _GAME_H
