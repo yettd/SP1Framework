@@ -116,6 +116,8 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
         break;
     case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
         break;
+    case S_UPGRADESCREEN: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
+        break;
     }
 }
 
@@ -174,6 +176,8 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     
     switch (keyboardEvent.uChar.AsciiChar)
     {
+    case 49: key = K_NUM1; break;
+    case 50: key = K_NUM2; break;
     case 87:
     case 119: key = K_UP; break;
     case 83:
@@ -257,8 +261,9 @@ void update(double dt)
     {
         case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
             break;
-        case S_GAME: updateGame();
-            score += 0.01;// gameplay logic when we are in the game
+        case S_GAME: updateGame();// gameplay logic when we are in the game
+            break;
+        case S_UPGRADESCREEN: upgradeScreenInput();
             break;
     }
 }
@@ -272,12 +277,39 @@ void splashScreenWait()    // waits for time to pass in splash screen
 
 void updateGame()       // gameplay logic
 {
+    if (score >= 5)
+        g_eGameState = S_UPGRADESCREEN;
+    score += 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
     moveEnemy();
     moveBullet();
     //spawnEnemy();
+}
+
+void upgradeScreenInput()
+{
+    if (g_skKeyEvent[K_NUM1].keyDown)
+    {
+        float fireRate = player.getFireRate();
+        fireRate-= 0.1;
+        player.SetFireRate(fireRate);
+        score = 0;
+        player.setCoordX(g_Console.getConsoleSize().X / 2);
+        player.setCoordY(g_Console.getConsoleSize().Y / 2);
+        g_eGameState = S_GAME;
+    }
+    else if (g_skKeyEvent[K_NUM2].keyDown)
+    {
+        float speed = player.getSpeed();
+        speed += 0.05;
+        player.setspeed(speed);
+        score = 0;
+        player.setCoordX(g_Console.getConsoleSize().X / 2);
+        player.setCoordY(g_Console.getConsoleSize().Y / 2);
+        g_eGameState = S_GAME;
+    }
 }
 
 void moveCharacter()
@@ -372,6 +404,8 @@ void render()
         break;
     case S_GAME: renderGame();
         break;
+    case S_UPGRADESCREEN: renderUpgradeScreen();
+        break;
     }
     displayScored();
 
@@ -441,6 +475,19 @@ void renderGame()
     renderEnemy();      // renders enemies
 }
 
+void renderUpgradeScreen()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.Y /= 3;
+    c.X = c.X / 2 - 9;
+    g_Console.writeToBuffer(c, "SELECT UPGRADE", 0x03);
+    c.Y += 1;
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, "1. Increase Fire Rate", 0x09);
+    c.Y += 1;
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, "2. Increase Movement Speed", 0x09);
+}
 void renderMap()
 {
     //// Set up sample colours, and output shadings
@@ -528,6 +575,10 @@ void renderInputEvents()
         ss.str("");
         switch (i)
         {
+        case K_NUM1: key = "NUM1";
+            break;
+        case K_NUM2: key = "NUM1";
+            break;
         case K_UP: key = "UP";
             break;
         case K_DOWN: key = "DOWN";
