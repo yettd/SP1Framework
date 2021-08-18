@@ -4,7 +4,7 @@
 
 enemy::enemy()
 {
-	setSym(0);
+	setSym(79);
 	setRandX();
 	setRandY();
 	mx = 0;

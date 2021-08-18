@@ -10,6 +10,7 @@
 #include "entity.h"
 #include "player.h"
 #include "bullet.h"
+#include "enemy.h"
 
 int face = 1;
 int lastface = 1;
@@ -20,6 +21,7 @@ SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
 std::vector<bullet*> b;
+std::vector<enemy*> e;
 
 // Game specific variables here
 Player  player;
@@ -261,6 +263,7 @@ void updateGame()       // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
     moveBullet();
+    
 }
 
 void moveCharacter()
@@ -314,6 +317,11 @@ void moveBullet()
     }
 }
 
+void spawnEnemy()
+{
+    e.push_back(new enemy);
+}
+
 void processUserInput()
 {
     // quits the game if player hits the escape key
@@ -359,6 +367,20 @@ void destroyBullet(int i)
     }
 }
 
+void destroyEnemy(int i)
+{
+
+    if (e[i]->getCoordX() > g_Console.getConsoleSize().X ||
+        e[i]->getCoordY() > g_Console.getConsoleSize().Y ||
+        e[i]->getCoordX() < 0 ||
+        e[i]->getCoordY() < 0)
+    {
+        delete e[i];
+        e.erase(e.begin() + i);
+    }
+    // Collision?
+}
+
 void clearScreen()
 {
     // Clears the buffer with this colour attribute
@@ -390,6 +412,7 @@ void renderGame()
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
     renderBullet();
+    renderEnemy();
 }
 
 void renderMap()
@@ -432,6 +455,17 @@ void renderBullet()
         temp.X = b[i]->getCoordX();
         temp.Y = b[i]->getCoordY();
         g_Console.writeToBuffer(temp, b[i]->getSym(), 0x17);
+    }
+}
+
+void renderEnemy()
+{
+    for (int i = 0; i < e.size(); i++)
+    {
+        COORD temp;
+        temp.X = e[i]->getCoordX();
+        temp.Y = e[i]->getCoordY();
+        g_Console.writeToBuffer(temp, e[i]->getSym(), 0x17);
     }
 }
 
