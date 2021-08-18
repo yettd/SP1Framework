@@ -7,8 +7,8 @@ enemy::enemy()
 	setSym(79);
 	setRandX();
 	setRandY();
-
-	setspeed(0.1);
+	setAI();
+	setspeed(0.075);
 
 
 	mx = 0;
@@ -120,5 +120,22 @@ void enemy::getDirfromPlayer(int x, int y)
 		movement(2);
 	}
 
+}
+
+int enemy::getAI()
+{
+	return AI;
+}
+
+void enemy::setAI()
+{
+	int ran;
+	for (int i = 0; i < 5; i++)
+	{
+		ran = (rand() % 100) + 1;
+	}
+	if (ran <= 50) AI = 0;
+	else if (ran <= 80) AI = 1;
+	else AI = 2;
 }
 
