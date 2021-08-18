@@ -277,7 +277,8 @@ void updateGame()       // gameplay logic
     rechargeFire();          // sound can be played here too.
     moveEnemy();
     moveBullet();
-    
+    spawnEnemy();
+    moveEnemy();
 }
 
 void moveCharacter()
@@ -344,6 +345,34 @@ void moveBullet()
 void spawnEnemy()
 {
     e.push_back(new enemy);
+}
+
+// Include enemy behaviour
+void moveEnemy()
+{
+    for (int i = 0; i < e.size(); i++)
+    {
+        //Dumb
+        if (e[i]->getAI() == 0)
+        {
+            int direction = e[i]->setDestination(player.getCoordX(), player.getCoordY());
+            e[i]->movement(direction);
+        }
+        //Agressive
+        else if (e[i]->getAI() == 1)
+        {
+
+        }
+        //Smart
+        else if (e[i]->getAI() == 2)
+        {
+
+        }
+
+
+
+        destroyEnemy(i);
+    }
 }
 
 void processUserInput()
@@ -436,7 +465,7 @@ void renderGame()
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
     renderBullet();
-    renderEnemy();
+    renderEnemy();      // renders enemies
 }
 
 void renderMap()

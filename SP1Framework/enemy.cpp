@@ -7,7 +7,11 @@ enemy::enemy()
 	setSym(79);
 	setRandX();
 	setRandY();
+
 	setspeed(0.1);
+	setRandAI();
+
+
 	mx = 0;
 	my = 0;
 }
@@ -25,7 +29,6 @@ void enemy::movement(int dir)
 		if (ceil(my) <= -1)
 		{
 			setCoordY(getCoordY() - 1);
-			setSym(94);
 			my = 0;
 		}
 	}
@@ -40,7 +43,6 @@ void enemy::movement(int dir)
 		{
 			//Beep(1440, 30);
 			setCoordY(getCoordY() + 1);
-			setSym(118);
 			my = 0;
 		}
 	}
@@ -55,7 +57,6 @@ void enemy::movement(int dir)
 		{
 			//Beep(1440, 30);
 			setCoordX(getCoordX() - 1);
-			setSym(60);
 			mx = 0;
 		}
 	}
@@ -70,7 +71,6 @@ void enemy::movement(int dir)
 		{
 			//Beep(1440, 30);
 			setCoordX(getCoordX() + 1);
-			setSym(62);
 			mx = 0;
 		}
 	}
@@ -98,6 +98,7 @@ void enemy::setRandY()
 	setCoordY(randomNumber);
 }
 
+
 void enemy::getDirfromPlayer(int x, int y)
 {
 	int disX = x - getCoordX();
@@ -120,3 +121,4 @@ void enemy::getDirfromPlayer(int x, int y)
 	}
 
 }
+
