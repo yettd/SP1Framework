@@ -258,6 +258,49 @@ void moveCharacter()
 
    
 }
+<<<<<<< Updated upstream
+=======
+void createBullet()
+{
+    b.push_back(new bullet(player.getCoordX(), player.getCoordY(), lastface));
+}
+void moveEnemy()
+{
+    for (int i = 0; i < e.size(); i++)
+    {
+        if (e[i]->getAI() == 0)
+        e[i]->getDirfromPlayer(player.getCoordX(), player.getCoordY());
+        else if (e[i]->getAI() == 1)
+        {
+            e[i]->getDirfromPlayer(player.getCoordX(), player.getCoordY());
+            //Shoot bullet
+        }
+        else if (e[i]->getAI() == 2)
+        {
+            // 64 x 20
+            e[i]->goToCircle();
+        }
+    }
+}
+
+void moveBullet()
+{
+    for (int i = 0; i < b.size(); i++)
+    {
+        b[i]->movement(b[i]->GetDirection());
+        destroyBullet(i);
+    }
+}
+
+void spawnEnemy()
+{
+    e.push_back(new enemy);
+}
+
+// Include enemy behaviour
+
+
+>>>>>>> Stashed changes
 void processUserInput()
 {
     // quits the game if player hits the escape key
