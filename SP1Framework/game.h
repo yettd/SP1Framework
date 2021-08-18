@@ -98,5 +98,7 @@ void destroyEnemy(int i);
 void moveEnemy();
 
 
+void displayWave();
+void updateWave();
 
 #endif // _GAME_H

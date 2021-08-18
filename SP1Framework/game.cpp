@@ -17,6 +17,7 @@ int lastface = 1;
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 float score = 0;
+int wave = 1;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
@@ -228,7 +229,7 @@ void displayScored()
     std::ostringstream ss;
     int WS= floor(score);
    // WS = b.size();
-    ss <<"SCORE : "<< std::to_string(WS);
+    ss <<"TIME : "<< std::to_string(WS);
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
 
@@ -293,12 +294,13 @@ void upgradeScreenInput()
     if (g_skKeyEvent[K_NUM1].keyDown)
     {
         float fireRate = player.getFireRate();
-        fireRate-= 0.1;
+        fireRate -= 0.1;
         player.SetFireRate(fireRate);
         score = 0;
         player.setCoordX(g_Console.getConsoleSize().X / 2);
         player.setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
+        updateWave();
     }
     else if (g_skKeyEvent[K_NUM2].keyDown)
     {
@@ -309,6 +311,7 @@ void upgradeScreenInput()
         player.setCoordX(g_Console.getConsoleSize().X / 2);
         player.setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
+        updateWave();
     }
 }
 
@@ -414,7 +417,7 @@ void render()
     case S_UPGRADESCREEN: renderUpgradeScreen();
         break;
     }
-    displayScored();
+    
 
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
     //renderInputEvents();    // renders status of input events
@@ -480,6 +483,8 @@ void renderGame()
     renderCharacter();  // renders the character into the buffer
     renderBullet();
     renderEnemy();      // renders enemies
+    displayScored();
+    displayWave();
 }
 
 void renderUpgradeScreen()
@@ -613,3 +618,21 @@ void renderInputEvents()
 
 
 
+
+void displayWave()
+{
+    COORD c;
+    c.X = 0;
+    c.Y = 1;
+    std::string s;
+    std::ostringstream ss;
+    int WS = floor(wave);
+    // WS = b.size();
+    ss << "WAVE : " << std::to_string(WS);
+    g_Console.writeToBuffer(c, ss.str(), 0x17);
+}
+
+void updateWave()
+{
+    wave++;
+}
