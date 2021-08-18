@@ -102,6 +102,8 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
         break;
     case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
         break;
+    case S_UPGRADESCREEN: gameplayKBHandler(keyboardEvent); // handle upgrade keyboard event 
+        break;
     }
 }
 
@@ -153,6 +155,9 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case VK_RIGHT: key = K_RIGHT; break; 
     case VK_SPACE: key = K_SPACE; break;
     case VK_ESCAPE: key = K_ESCAPE; break; 
+    case 49: key = K_NUM1; break;
+    case 50: key = K_NUM2; break;
+
     }
     // a key pressed event would be one with bKeyDown == true
     // a key released event would be one with bKeyDown == false
@@ -184,6 +189,26 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
 
+<<<<<<< Updated upstream
+=======
+void displayScored()
+{
+    COORD c;
+    c.X = 0;
+    c.Y = 0;
+    std::string s;
+    std::ostringstream ss;
+    int WS= floor(score);
+    ss <<"TIME : "<< std::to_string(WS);
+    g_Console.writeToBuffer(c, ss.str(), 0x17);
+}
+
+void updateScord(int s)
+{
+    score += s;
+}
+
+>>>>>>> Stashed changes
 //--------------------------------------------------------------
 // Purpose  : Update function
 //            This is the update function
@@ -208,7 +233,16 @@ void update(double dt)
     {
         case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
             break;
+<<<<<<< Updated upstream
         case S_GAME: updateGame(); // gameplay logic when we are in the game
+=======
+        case S_GAME: updateGame();
+            score += 0.01;// gameplay logic when we are in the game
+            if (score >= 5)
+                g_eGameState = S_UPGRADESCREEN;
+            break;
+        case S_UPGRADESCREEN: 
+>>>>>>> Stashed changes
             break;
     }
 }
@@ -225,6 +259,18 @@ void updateGame()       // gameplay logic
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
+}
+
+void upgradeSelect()
+{
+    if (g_skKeyEvent[K_NUM1].keyDown)
+    {
+        g_eGameState = S_GAME;
+    }
+    else if (g_skKeyEvent[K_NUM1].keyDown)
+    {
+        g_eGameState = S_Lose;
+    }
 }
 
 void moveCharacter()
@@ -282,6 +328,7 @@ void render()
         break;
     case S_GAME: renderGame();
         break;
+    case S_UPGRADESCREEN: renderUpgradeScreen();
     }
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
     renderInputEvents();    // renders status of input events
@@ -318,6 +365,20 @@ void renderGame()
 {
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
+}
+
+void renderUpgradeScreen()
+{
+    COORD c = g_Console.getConsoleSize();
+    c.Y /= 3;
+    c.X = c.X / 2 - 9;
+    g_Console.writeToBuffer(c, "SELECT UPGRADE", 0x03);
+    c.Y += 1;
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, "1. Increase Fire Rate", 0x09);
+    c.Y += 1;
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, "2. Increase Movement Speed", 0x09);
 }
 
 void renderMap()
@@ -389,6 +450,10 @@ void renderInputEvents()
         case K_RIGHT: key = "RIGHT";
             break;
         case K_SPACE: key = "SPACE";
+            break;
+        case K_NUM1: key = "NUM1";
+            break;
+        case K_NUM2: key = "NUM2";
             break;
         default: continue;
         }
