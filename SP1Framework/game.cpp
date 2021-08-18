@@ -18,6 +18,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float score = 0;
 int wave = 1;
+int maxenemy = 0;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
@@ -301,6 +302,9 @@ void upgradeScreenInput()
         player.setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
         updateWave();
+        clearEnemy();
+        updateMaxenemy();
+        spawnEnemy();
     }
     else if (g_skKeyEvent[K_NUM2].keyDown)
     {
@@ -312,6 +316,9 @@ void upgradeScreenInput()
         player.setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
         updateWave();
+        clearEnemy();
+        updateMaxenemy();
+        spawnEnemy();
     }
 }
 
@@ -382,11 +389,40 @@ void moveBullet()
     }
 }
 
-void spawnEnemy()
+void updateMaxenemy()
 {
-    e.push_back(new enemy);
+    if (wave == 1)
+    {
+        maxenemy = 1;
+    }
+    else if (wave < 4)
+    {
+        maxenemy = wave;
+    }
+    else if (wave < 10)
+    {
+        maxenemy = ceil(wave + 2);
+    }
+    else
+    {
+        maxenemy = ceil(wave + 5);
+    }
 }
 
+void spawnEnemy()
+{
+    int current = 0;
+    while (current < maxenemy)
+    {
+        e.push_back(new enemy);
+        current++;
+    }
+}
+
+void clearEnemy()
+{
+    e.erase(e.begin(), e.end());
+}
 // Include enemy behaviour
 
 

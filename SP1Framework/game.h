@@ -94,9 +94,10 @@ void rechargeFire();
 
 void renderEnemy();
 void spawnEnemy();
+void clearEnemy();
 void destroyEnemy(int i);
 void moveEnemy();
-
+void updateMaxenemy();
 
 void displayWave();
 void updateWave();
