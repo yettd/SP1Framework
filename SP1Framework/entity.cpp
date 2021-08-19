@@ -69,3 +69,13 @@ void entity::SetFireC(float i)
 {
     fireCharge = i;
 }
+
+char entity::getTag()
+{
+    return tag;
+}
+
+void entity::setTag(char t)
+{
+    tag = t;
+}

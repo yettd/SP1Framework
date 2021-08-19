@@ -8,7 +8,7 @@
 #include <sstream>
 #include <vector>
 #include "entity.h"
-#include "player.h"
+#include "Player.h"
 #include "bullet.h"
 #include "enemy.h"
 
@@ -19,14 +19,16 @@ double  g_dDeltaTime;
 float score = 0;
 int wave = 1;
 int maxenemy = 0;
+int current = 0;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
 std::vector<bullet*> b;
 std::vector<enemy*> e;
-
+std::vector<entity*> en;
 // Game specific variables here
-Player  player;
+//Player  player;
+
 EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
@@ -41,18 +43,18 @@ Console g_Console(80, 25, "SP1 Framework");
 //--------------------------------------------------------------
 void init( void )
 {
+    srand(time(NULL));
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
-
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
-
-    player.setSym(94);
-    player.setspeed(0.1);
-    player.setCoordX(g_Console.getConsoleSize().X / 2);
-    player.setCoordY(g_Console.getConsoleSize().Y / 2);
-    player.setm_bActive(true);
-    e.push_back(new enemy);
+    en.push_back(new Player);
+    en[0]->setSym(94);
+    en[0]->setspeed(0.1);
+    en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
+    en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
+    en[0]->setm_bActive(true);
+    en.push_back(new enemy);
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -153,13 +155,20 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 }
 void rechargeFire()
 {
-    if (player.getm_activr() == false)
+    //fire rate for all
+    for (int i = 0; i < en.size(); i++)
     {
-        player.SetFireC(player.getFireC() + 0.01);
-        if (player.getFireC() >= player.getFireRate())
+        if (en[i]->getTag() == 'P' || en[i]->getTag() == 'E')
         {
-            player.setm_bActive(true);
-            player.SetFireC(0);
+            if (en[i]->getm_activr() == false)
+            {
+                en[i]->SetFireC(en[i]->getFireC() + 0.01);
+                if (en[i]->getFireC() >= en[i]->getFireRate())
+                {
+                    en[i]->setm_bActive(true);
+                    en[i]->SetFireC(0);
+                }
+            }
         }
     }
 }
@@ -231,7 +240,8 @@ void displayScored()
     std::string s;
     std::ostringstream ss;
     int WS= floor(score);
-   // WS = b.size();
+
+    WS = maxenemy;
     ss <<"TIME : "<< std::to_string(WS);
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
@@ -239,6 +249,46 @@ void displayScored()
 void updateScord(int s)
 {
     score += s;
+}
+
+void collisionDetection()
+{
+    int size = en.size();
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            if (i != j)
+            {
+                if (en[i]->getCoordX() == en[j]->getCoordX() && en[i]->getCoordY() == en[j]->getCoordY())
+                {
+                    if (en[i]->getTag() == 'P')
+                    {
+                        if (en[j]->getTag() == 45 || en[j]->getTag() == 'E')
+                        {
+                            delete en[j];
+                            en.erase(en.begin() + j);
+                            ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
+                            size = en.size();
+                        }
+                    }
+                    else if (en[i]->getTag() == 'E')
+                    {
+                        if (en[j]->getTag() == 43)
+                        {
+                            delete en[j];
+                            delete en[i];
+
+                            en.erase(en.begin() + j);
+                            en.erase(en.begin() + i);
+                            size = en.size();
+                        }
+                    }
+                    
+                }
+            }
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -283,46 +333,54 @@ void splashScreenWait()    // waits for time to pass in splash screen
 
 void updateGame()       // gameplay logic
 {
+
     if (score >= 5)
+    {
         g_eGameState = S_UPGRADESCREEN;
+    }
+
     score += 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
     moveEnemy();
     moveBullet();
-    //spawnEnemy();
+    enShoot();
+    collisionDetection();
+   // spawnEnemy();
 }
 
 void upgradeScreenInput()
 {
     if (g_skKeyEvent[K_NUM1].keyDown)
     {
-        float fireRate = player.getFireRate();
+        float fireRate = en[0]->getFireRate();
         fireRate -= 0.1;
-        player.SetFireRate(fireRate);
+        en[0]->SetFireRate(fireRate);
         score = 0;
-        player.setCoordX(g_Console.getConsoleSize().X / 2);
-        player.setCoordY(g_Console.getConsoleSize().Y / 2);
+        en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
+        en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
         updateWave();
         clearEnemy();
         updateMaxenemy();
         spawnEnemy();
+        current = 0;
     }
     else if (g_skKeyEvent[K_NUM2].keyDown)
     {
-        float speed = player.getSpeed();
+        float speed = en[0]->getSpeed();
         speed += 0.05;
-        player.setspeed(speed);
+        en[0]->setspeed(speed);
         score = 0;
-        player.setCoordX(g_Console.getConsoleSize().X / 2);
-        player.setCoordY(g_Console.getConsoleSize().Y / 2);
+        en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
+        en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
         updateWave();
         clearEnemy();
         updateMaxenemy();
         spawnEnemy();
+         current = 0;
     }
 }
 
@@ -330,66 +388,97 @@ void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
-    if (g_skKeyEvent[K_UP].keyDown && player.getCoordY() > 1)
+    if (g_skKeyEvent[K_UP].keyDown && en[0]->getCoordY() > 1)
     {
         face += 1;
-        player.movement(1);
+        en[0]->movement(1);
     }
-    else if (g_skKeyEvent[K_DOWN].keyDown && player.getCoordY() < g_Console.getConsoleSize().Y - 1)
+    else if (g_skKeyEvent[K_DOWN].keyDown && en[0]->getCoordY() < g_Console.getConsoleSize().Y - 1)
     {
         face -= 1;
-        player.movement(2);
+        en[0]->movement(2);
     }
-    if (g_skKeyEvent[K_LEFT].keyDown && player.getCoordX() > 0)
+    if (g_skKeyEvent[K_LEFT].keyDown && en[0]->getCoordX() > 0)
     {
         face -= 3;
-        player.movement(3);
+        en[0]->movement(3);
     }
-    else if (g_skKeyEvent[K_RIGHT].keyDown && player.getCoordX() < g_Console.getConsoleSize().X - 1)
+    else if (g_skKeyEvent[K_RIGHT].keyDown && en[0]->getCoordX() < g_Console.getConsoleSize().X - 1)
     {
         face += 3;
-        player.movement(4);
+        en[0]->movement(4);
     }
     if (face != 0)
     {
         lastface = face;
     }
-    if (g_skKeyEvent[K_SPACE].keyDown && player.getm_activr() == true)
+    if (g_skKeyEvent[K_SPACE].keyDown && en[0]->getm_activr() == true)
     {
-        createBullet();
-        player.setm_bActive(false);
+        createBullet(en[0]->getCoordX(), en[0]->getCoordY(),43,lastface);
+        en[0]->setm_bActive(false);
 
     }
  
     face = 0;
 
-   
 }
-void createBullet()
+
+void enShoot()
 {
-    b.push_back(new bullet(player.getCoordX(), player.getCoordY(), lastface));
+    for (int i = 0; i < en.size(); i++)
+    {
+        if (en[i]->getTag() == 'E')
+        {
+            enemy* e = (enemy*)en[i];
+            if (e->getm_activr() == true&& e->getAI()!=0)
+            {
+                createBullet(e->getCoordX(), e->getCoordY(), 45, e->shootDir(en[0]->getCoordX(), en[0]->getCoordY()));
+                e->SetFireC(0);
+                e->setm_bActive(false);
+            }
+        }
+    }
+}
+
+void createBullet(int x,int y,char t,int dir)
+{
+    en.push_back(new bullet(x, y, dir,t));
 }
 void moveEnemy()
 {
-    for (int i = 0; i < e.size(); i++)
+    for (int i = 0; i < en.size(); i++)
     {
-        if (e[i]->getAI() == 0)
-        e[i]->getDirfromPlayer(player.getCoordX(), player.getCoordY());
-        else if (e[i]->getAI() == 1)
+        if (en[i]->getTag() == 'E')
         {
-            e[i]->getDirfromPlayer(player.getCoordX(), player.getCoordY());
-            //Shoot bullet
+            enemy* e = ((enemy*)en[i]);
+            if (e->getAI() == 0)
+            {
+                e->DumbAI(en[0]->getCoordX(), en[0]->getCoordY());
+            }
+            else if (e->getAI() == 1)
+            {
+                e->AggresiveAI(en[0]->getCoordX(), en[0]->getCoordY(), g_Console.getConsoleSize().X, g_Console.getConsoleSize().Y);
+                //Shoot bullet
+            }
+            else if (e->getAI() == 2) 
+            {
+            
+
+            }
         }
-        else if (e[i]->getAI() == 2){}
     }
 }
 
 void moveBullet()
 {
-    for (int i = 0; i < b.size(); i++)
+    for (int i = 0; i < en.size(); i++)
     {
-        b[i]->movement(b[i]->GetDirection());
-        destroyBullet(i);
+        if (en[i]->getTag() == 43 || en[i]->getTag() == 45)
+        {
+            bullet* b = (bullet*)en[i];
+            b->movement(b->GetDirection());
+            destroyBullet(i);
+        }
     }
 }
 
@@ -415,17 +504,17 @@ void updateMaxenemy()
 
 void spawnEnemy()
 {
-    int current = 0;
+
     while (current < maxenemy)
     {
-        e.push_back(new enemy);
+        en.push_back(new enemy);
         current++;
     }
 }
 
 void clearEnemy()
 {
-    e.erase(e.begin(), e.end());
+    en.erase(en.begin() + 1,en.end());
 }
 // Include enemy behaviour
 
@@ -468,20 +557,18 @@ void render()
 }
 void destroyBullet(int i)
 {
-    
-    if (b[i]->getCoordX() > g_Console.getConsoleSize().X ||
-        b[i]->getCoordY() > g_Console.getConsoleSize().Y ||
-        b[i]->getCoordX() < 0 ||
-        b[i]->getCoordY() < 0)
+    if (en[i]->getCoordX() > g_Console.getConsoleSize().X ||
+        en[i]->getCoordY() > g_Console.getConsoleSize().Y ||
+        en[i]->getCoordX() < 0 ||
+        en[i]->getCoordY() < 0)
     {
-        delete b[i];
-        b.erase(b.begin() + i);
+        delete en[i];
+        en.erase(en.begin() + i);
     }
 }
 
 void destroyEnemy(int i)
 {
-
     if (e[i]->getCoordX() > g_Console.getConsoleSize().X ||
         e[i]->getCoordY() > g_Console.getConsoleSize().Y ||
         e[i]->getCoordX() < 0 ||
@@ -522,9 +609,10 @@ void renderSplashScreen()  // renders the splash screen
 void renderGame()
 {
     renderMap();        // renders the map to the buffer first
-    renderCharacter();  // renders the character into the buffer
-    renderBullet();
-    renderEnemy();      // renders enemies
+    renderEntity();
+    //renderCharacter();  // renders the character into the buffer
+    //renderBullet();
+    //renderEnemy();      // renders enemies
     displayScored();
     displayWave();
 }
@@ -575,18 +663,38 @@ void renderMap()
     //}
 }
 
+void renderEntity()
+{
+    for (int i = 0; i < en.size(); i++)
+    {
+        WORD charColor= 0x17;
+        if (en[i]->getTag() == 'P')
+        {
+            charColor = 0x17;
+        }
+        else
+        {
+            charColor = 0x0C;
+        }
+        COORD temp;
+        temp.X = en[i]->getCoordX();
+        temp.Y = en[i]->getCoordY();
+        g_Console.writeToBuffer(temp, en[i]->getSym(), charColor);
+    }
+}
+
 void renderCharacter()
 {
     // Draw the location of the character
     WORD charColor = 0x0C;
-    //if (player.m_bActive)
+    //if (en[0]->m_bActive)
     //{
     //    charColor = 0x0A;
     //}
     COORD temp;
-    temp.X = player.getCoordX();
-    temp.Y = player.getCoordY();
-    g_Console.writeToBuffer(temp, player.getSym(), 0x17);
+    temp.X = en[0]->getCoordX();
+    temp.Y = en[0]->getCoordY();
+    g_Console.writeToBuffer(temp, en[0]->getSym(), 0x17);
 }
 
 void renderBullet()
@@ -684,7 +792,6 @@ void displayWave()
     std::string s;
     std::ostringstream ss;
     int WS = floor(wave);
-    // WS = b.size();
     ss << "WAVE : " << std::to_string(WS);
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }

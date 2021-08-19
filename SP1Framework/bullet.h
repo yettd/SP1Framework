@@ -9,7 +9,7 @@ private:
     int direection;
 public:
     bullet();
-    bullet(int posX, int  posY, int dir);
+    bullet(int posX, int  posY, int dir, char t);
 
     void movement(int dir);
 

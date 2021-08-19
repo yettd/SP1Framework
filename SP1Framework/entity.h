@@ -7,7 +7,7 @@ private:
 	COORD Location;
 	char sym;
 	float speed;
-
+	char tag;
 	//fireing
 	bool  m_bActive;
 	float FireRate;
@@ -33,6 +33,9 @@ public:
 	void SetFireRate(float i);
 	float getFireC();
 	void SetFireC(float i);
+
+	char getTag();
+	void setTag(char t);
 
 	virtual void movement(int dir) = 0;
 };

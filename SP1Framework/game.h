@@ -89,7 +89,7 @@ void updateScord(int s);
 
 void renderBullet();
 void moveBullet();
-void createBullet();
+void createBullet(int x, int y, char t, int dir);
 void destroyBullet(int i);
 
 void rechargeFire();
@@ -104,4 +104,8 @@ void updateMaxenemy();
 void displayWave();
 void updateWave();
 
+void collisionDetection();
+
+void renderEntity();
+void enShoot();
 #endif // _GAME_H

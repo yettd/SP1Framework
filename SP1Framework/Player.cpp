@@ -6,10 +6,12 @@ Player::Player()
 	setCoordX(0);
 	setCoordY(0);
 	SetFireRate(1);
+	setTag('P');
 	setm_bActive(true);
 	SetFireC(0);
 	mx = 0;
 	my = 0;
+	hp = 3;
 }
 
 void Player::movement(int dir)

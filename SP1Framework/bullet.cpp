@@ -10,12 +10,13 @@ bullet::bullet()
 	setspeed(0.5);
 }
 
-bullet::bullet(int posX, int posY, int dir)
+bullet::bullet(int posX, int posY, int dir, char t)
 {
 
 	setSym(0);
 	setCoordX(posX);
 	setCoordY(posY);
+	setTag(t);
 	direection = dir;
 	mx = 0;
 	my = 0;
