@@ -7,7 +7,8 @@ class enemy :
     static int count;
 private:
     int AI;
-    bool wall = false;
+    bool wall;
+    int LR;
     int dx;
     int dy;
 public:
@@ -23,7 +24,7 @@ public:
     int shootDir(int x, int y);
 
     void AggresiveAI(int x, int y, int cx, int cy);
-    void SmartAI(); 
+    void SmartAI(int cx, int cy);
     void DumbAI(int x, int y);
 
 };

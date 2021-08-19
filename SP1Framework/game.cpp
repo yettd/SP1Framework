@@ -240,9 +240,8 @@ void displayScored()
     std::string s;
     std::ostringstream ss;
     int WS= floor(score);
-
-    WS = maxenemy;
     ss <<"TIME : "<< std::to_string(WS);
+
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
 
@@ -458,12 +457,10 @@ void moveEnemy()
             else if (e->getAI() == 1)
             {
                 e->AggresiveAI(en[0]->getCoordX(), en[0]->getCoordY(), g_Console.getConsoleSize().X, g_Console.getConsoleSize().Y);
-                //Shoot bullet
             }
             else if (e->getAI() == 2) 
             {
-            
-
+                e->SmartAI(g_Console.getConsoleSize().X, g_Console.getConsoleSize().Y);
             }
         }
     }
@@ -787,8 +784,8 @@ void renderInputEvents()
 void displayWave()
 {
     COORD c;
-    c.X = 0;
-    c.Y = 1;
+    c.X = g_Console.getConsoleSize().X/2;
+    c.Y = 0;
     std::string s;
     std::ostringstream ss;
     int WS = floor(wave);

@@ -13,6 +13,9 @@ enemy::enemy()
 	SetFireC(0);
 	setspeed(0.075);
 
+	wall = false;
+	dy = 0;
+	dx = 0;
 
 	mx = 0;
 	my = 0;
@@ -96,6 +99,11 @@ void enemy::setRandY()
 void enemy::AggresiveAI(int x, int y,int cx,int cy)
 {
 	setSym('A');
+	if (dx == 0 && dy == 0)
+	{
+		dx = getDirXfromPlayer(x);
+		dy = getDirYfromPlayer(y);
+	}
 	if (wall == false)
 	{
 		//move stright
@@ -115,7 +123,7 @@ void enemy::AggresiveAI(int x, int y,int cx,int cy)
 		{
 			movement(2);
 		}
-		if (getCoordX() <= 0 || getCoordX() >= cx || getCoordY() <= 0 || getCoordY() >= cy)
+		if (getCoordX() <= 0 || getCoordX() >= cx || getCoordY() <= 1 || getCoordY() >= cy)
 		{
 			wall = true;
 		}
@@ -130,8 +138,100 @@ void enemy::AggresiveAI(int x, int y,int cx,int cy)
 	}
 }
 
-void enemy::SmartAI()
+void enemy::SmartAI(int cx, int cy)
 {
+	setSym('S');
+	if (wall == false)
+	{
+		//get closest wall
+		//get centerpoint for both
+		float halfCX = cx / 2;
+		float halfCY = cy / 2;
+		if (dx == 0 && dy == 0)
+		{
+			dy = halfCY - getCoordY();
+			dx = halfCX - getCoordX();
+		}
+
+		if (fabs(dy) > fabs(dx))
+		{
+			if (dx < halfCX)
+			{
+				movement(3);
+			}
+			else
+			{
+				movement(4);
+			}
+		}
+		else
+		{
+			if (dy < halfCY)
+			{
+				movement(1);
+			}
+			else
+			{
+				movement(2);
+			}
+		}
+		if (getCoordX() <= 0 || getCoordX() >= cx-1 || getCoordY() >= cy || getCoordY() <= 1)
+		{
+			wall = true;
+		}
+	}
+	else
+	{
+		if (getCoordX() == 0 )
+		{
+			//most left
+			if (LR == 1)
+			{
+				movement(1);
+			}
+			else
+			{
+				movement(2);
+			}
+		}
+		else if (getCoordX() == cx-1)
+		{
+			//most right
+			if (LR == 1)
+			{
+				movement(2);
+			}
+			else
+			{
+				movement(1);
+			}
+		}
+		if (getCoordY() == 1)
+		{
+			//most up
+			if (LR == 1)
+			{
+				movement(4);
+			}
+			else
+			{
+				movement(3);
+			}
+		}
+		else if (getCoordY() == cy-1)
+		{
+			
+			//most down
+			if (LR == 1)
+			{
+				movement(3);
+			}
+			else
+			{
+				movement(4);
+			}
+		}
+	}
 }
 
 void enemy::DumbAI(int x, int y)
@@ -207,9 +307,20 @@ void enemy::setAI()
 	{
 		ran = (rand() % 100) + 1;
 	}
-	if (ran <= 50) AI = 0;
-	else if (ran <= 80) AI = 1;
-	else AI = 2;
-	//AI = 1;
+	if (ran <= 50)
+	{
+		AI = 0;
+	}
+	else if (ran <= 80)
+	{
+		AI = 1;
+	}
+	else
+	{
+		AI = 2;
+		LR = rand() % 2 + 1;
+	}
+	
+
 }
 

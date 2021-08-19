@@ -110,7 +110,6 @@ void bullet::movement(int dir)
 
 			mx = 0;
 		}
-		setSym(124);
 		if (my > 0)
 		{
 			my = -1;
@@ -169,7 +168,6 @@ void bullet::movement(int dir)
 
 			mx = 0;
 		}
-		setSym(124);
 		if (my > 0)
 		{
 			my = -1;
