@@ -20,12 +20,15 @@ float score = 0;
 int wave = 1;
 int maxenemy = 0;
 int current = 0;
+
+int ug1 = 5, ug2 = 5, ug3 = 5;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
 std::vector<bullet*> b;
 std::vector<enemy*> e;
 std::vector<entity*> en;
+std::ostringstream error;
 // Game specific variables here
 //Player  player;
 
@@ -191,6 +194,8 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     {
     case 49: key = K_NUM1; break;
     case 50: key = K_NUM2; break;
+    case 51: key = K_NUM3; break;
+    case 52: key = K_NUM4; break;
     case 87:
     case 119: key = K_UP; break;
     case 83:
@@ -240,7 +245,8 @@ void displayScored()
     std::string s;
     std::ostringstream ss;
     int WS= floor(score);
-    ss <<"TIME : "<< std::to_string(WS);
+    int hp = ((Player*)en[0])->getHp();
+    ss <<"TIME : "<< std::to_string(WS)<<"  HP:"<< std::to_string(hp);
 
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
@@ -375,20 +381,91 @@ void upgradeScreenInput()
 {
     if (g_skKeyEvent[K_NUM1].keyDown)
     {
-        float fireRate = en[0]->getFireRate();
-        fireRate -= 0.1;
-        en[0]->SetFireRate(fireRate);
-        score = 0;
-        en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
-        en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
-        g_eGameState = S_GAME;
-        updateWave();
-        clearEnemy();
-        updateMaxenemy();
-        spawnEnemy();
-        current = 0;
+        if (((Player*)en[0])->getcoin() > ug1)
+        {
+            ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin()-ug1);
+            float fireRate = en[0]->getFireRate();
+            fireRate -= 0.1;
+            en[0]->SetFireRate(fireRate);
+            score = 0;
+            en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
+            en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
+            g_eGameState = S_GAME;
+            updateWave();
+            ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
+            clearEnemy();
+            updateMaxenemy();
+            spawnEnemy();
+            current = 0;
+            ug1 += 5;
+            error.str("");
+        }
+        else
+        {
+            if (error.str() == "")
+            {
+                error << "NOT ENOUGH COINS";
+            }
+        }
     }
     else if (g_skKeyEvent[K_NUM2].keyDown)
+    {
+        if (((Player*)en[0])->getcoin() > ug2)
+        {
+            ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug2);
+            float speed = en[0]->getSpeed();
+            speed += 0.05;
+            en[0]->setspeed(speed);
+            score = 0;
+            en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
+            en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
+            g_eGameState = S_GAME;
+            updateWave();
+            ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
+            clearEnemy();
+            updateMaxenemy();
+            spawnEnemy();
+            current = 0;
+            ug2 += 5;
+            error.str("");
+        }
+        else
+        {
+            if (error.str() == "")
+            {
+                error << "NOT ENOUGH COINS";
+            }
+  
+        }
+    }
+    else if (g_skKeyEvent[K_NUM3].keyDown)
+    {
+        if (((Player*)en[0])->getcoin() > ug3)
+        {
+            ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug3);
+            ((Player*)en[0])->setmHp(((Player*)en[0])->getmHp()+1);
+            score = 0;
+            en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
+            en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
+            g_eGameState = S_GAME;
+            updateWave();
+            ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
+            clearEnemy();
+            updateMaxenemy();
+            spawnEnemy();
+            current = 0;
+            ug3 += 5;
+            error.str("");
+        }
+        else
+        {
+            if (error.str() == "")
+            {
+                error << "NOT ENOUGH COINS";
+            }
+        }
+    }
+    else if (g_skKeyEvent[K_NUM4].keyDown)
     {
         float speed = en[0]->getSpeed();
         speed += 0.05;
@@ -398,10 +475,11 @@ void upgradeScreenInput()
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
         updateWave();
+        ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
         clearEnemy();
         updateMaxenemy();
         spawnEnemy();
-         current = 0;
+        current = 0;
     }
 }
 
@@ -443,7 +521,17 @@ void moveCharacter()
     face = 0;
 
 }
-
+void displayError()
+{
+    if (error.str() != "")
+    {
+        COORD c = g_Console.getConsoleSize();
+        c.Y=
+        c.Y /3 + 5;
+        c.X = c.X / 2 - 9;
+        g_Console.writeToBuffer(c, error.str(), 0x09);
+    }
+}
 void enShoot()
 {
     for (int i = 0; i < en.size(); i++)
@@ -565,6 +653,8 @@ void render()
     case S_LOSE: renderLoseScreen();
         break;
     case S_UPGRADESCREEN: renderUpgradeScreen();
+        displayCoin();
+        displayError();
         break;
     }
     
@@ -639,16 +729,32 @@ void renderGame()
 
 void renderUpgradeScreen()
 {
+    std::ostringstream ss;
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
     c.X = c.X / 2 - 9;
-    g_Console.writeToBuffer(c, "SELECT UPGRADE", 0x03);
+    ss << "Select Upgrade";
+    g_Console.writeToBuffer(c, ss.str(), 0x03);
+    ss.str("");
+    ss << "1. Increase Fire Rate " << "( " << ug1 << " coin )";
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 9;
-    g_Console.writeToBuffer(c, "1. Increase Fire Rate", 0x09);
+    g_Console.writeToBuffer(c, ss.str(), 0x09);
     c.Y += 1;
+    ss.str("");
+    ss <<  "2. Increase Movement Speed" << "( " << ug2 << " coin )";
     c.X = g_Console.getConsoleSize().X / 2 - 9;
-    g_Console.writeToBuffer(c, "2. Increase Movement Speed", 0x09);
+    g_Console.writeToBuffer(c,ss.str(), 0x09);
+    c.Y += 1;
+    ss.str("");
+    ss << "3. Increase Max health" << "( " << ug3 << " coin )";
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, ss.str(), 0x09);
+    c.Y += 1;
+    ss.str("");
+    ss << "4. skip";
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, ss.str(), 0x09);
 }
 
 void renderLoseScreen()

@@ -34,6 +34,8 @@ enum EKEYS
     K_SPACE,
     K_NUM1,
     K_NUM2,
+    K_NUM3,
+    K_NUM4,
     K_COUNT
 };
 

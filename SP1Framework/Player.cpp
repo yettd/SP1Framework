@@ -7,6 +7,7 @@ Player::Player()
 	setCoordX(0);
 	setCoordY(0);
 	SetFireRate(1);
+	setmHp(3);
 	setTag('P');
 	setm_bActive(true);
 	SetFireC(0);
@@ -93,6 +94,14 @@ int Player::getHp()
 	return hp;
 }
 
+void Player::setmHp(int h)
+{
+	Mhp = h;
+}
+int Player::getmHp()
+{
+	return Mhp;
+}
 void Player::setCoin(int c)
 {
 	coin = c;
