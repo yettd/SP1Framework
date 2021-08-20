@@ -326,7 +326,7 @@ void enemy::setAI()
 	{
 		ran = (rand() % 100) + 1;
 	}
-	if (ran <= 50)
+	if (ran <= 40)
 	{
 		//Dumb
 		AI = 0;
@@ -334,15 +334,15 @@ void enemy::setAI()
 	}
 	else if (ran <= 80)
 	{
-		//Aggressive
-		AI = 1;
-		setspeed(0.015);
+		//Smart
+		AI = 2;
+		LR = rand() % 2 + 1; 
 	}
 	else
 	{
-		//Smart
-		AI = 2;
-		LR = rand() % 2 + 1;
+		//Aggressive
+		AI = 1;
+		setspeed(0.015);
 	}
 	
 
