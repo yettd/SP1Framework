@@ -352,6 +352,7 @@ void enemy::setAI()
 		//Aggressive
 		AI = 1;
 		setspeed(0.015);
+		SetFireRate(0.2);
 	}
 	
 

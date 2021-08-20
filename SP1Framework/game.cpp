@@ -12,6 +12,8 @@
 #include "bullet.h"
 #include "enemy.h"
 
+float spawnCounter = 2;
+float spawnRate = spawnCounter;
 int face = 1;
 int lastface = 1;
 double  g_dElapsedTime;
@@ -21,6 +23,7 @@ float currTime = 0;
 int wave = 1;
 int maxenemy = 0;
 int current = 0;
+
 
 int ug1 = 5, ug2 = 5, ug3 = 5;
 SKeyEvent g_skKeyEvent[K_COUNT];
@@ -59,7 +62,6 @@ void init( void )
     en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
     en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
     en[0]->setm_bActive(true);
-    en.push_back(new enemy);
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 
@@ -253,10 +255,7 @@ void displayScored()
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
 
-void updateScord(int s)
-{
-    currTime += s;
-}
+
 
 void collisionDetection()
 {
@@ -362,7 +361,7 @@ void splashScreenWait()    // waits for time to pass in splash screen
 
 void updateGame()       // gameplay logic
 {
-    if (((Player*)en[0])->getHp() == 0)
+    if (((Player*)en[0])->getHp() <= 0)
     {
         en.clear();
         g_eGameState = S_LOSE;
@@ -372,6 +371,7 @@ void updateGame()       // gameplay logic
         g_eGameState = S_UPGRADESCREEN;
     }
 
+    spawnEnemy();
     currTime -= 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
@@ -401,10 +401,10 @@ void upgradeScreenInput()
             ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
             clearEnemy();
             updateMaxenemy();
-            spawnEnemy();
             current = 0;
             ug1 += 5;
             error.str("");
+            spawnRate = spawnCounter;
         }
         else
         {
@@ -430,10 +430,10 @@ void upgradeScreenInput()
             ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
             clearEnemy();
             updateMaxenemy();
-            spawnEnemy();
             current = 0;
             ug2 += 5;
             error.str("");
+            spawnRate = spawnCounter;
         }
         else
         {
@@ -458,10 +458,10 @@ void upgradeScreenInput()
             ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
             clearEnemy();
             updateMaxenemy();
-            spawnEnemy();
             current = 0;
             ug3 += 5;
             error.str("");
+            spawnRate = spawnCounter;
         }
         else
         {
@@ -484,8 +484,9 @@ void upgradeScreenInput()
         ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
         clearEnemy();
         updateMaxenemy();
-        spawnEnemy();
         current = 0;
+        error.str("");
+        spawnRate = spawnCounter;
     }
 }
 
@@ -504,9 +505,10 @@ void loseScreenInput()
         en[0]->setm_bActive(true);
         g_eGameState = S_GAME;
         clearEnemy();
+        spawnCounter = 2;
         updateMaxenemy();
-        spawnEnemy();
         current = 0;
+        spawnRate = spawnCounter;
     }
     else if (g_skKeyEvent[K_ESCAPE].keyDown)
     {
@@ -645,11 +647,14 @@ void updateMaxenemy()
 
 void spawnEnemy()
 {
-
-    while (current < maxenemy)
+    if (spawnRate >= spawnCounter)
     {
         en.push_back(new enemy);
-        current++;
+        spawnRate = 0;
+    }
+    else
+    {
+        spawnRate += 0.01;
     }
 }
 
@@ -849,12 +854,8 @@ void renderEntity()
 
 void renderCharacter()
 {
-    // Draw the location of the character
+    //Draw the location of the character
     WORD charColor = 0x0C;
-    //if (en[0]->m_bActive)
-    //{
-    //    charColor = 0x0A;
-    //}
     COORD temp;
     temp.X = en[0]->getCoordX();
     temp.Y = en[0]->getCoordY();
@@ -901,8 +902,6 @@ void renderFramerate()
     c.Y = 0;
     g_Console.writeToBuffer(c, ss.str(), 0x59);*/
 }
-
-
 
 // this is an example of how you would use the input events
 void renderInputEvents()
@@ -987,4 +986,5 @@ void displayWave()
 void updateWave()
 {
     wave++;
+    spawnCounter -= 0.01;
 }
