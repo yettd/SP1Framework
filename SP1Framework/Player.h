@@ -6,6 +6,8 @@ class Player :
 {
 private:
     int hp;
+
+    int coin;
 public:
 
     Player();
@@ -14,6 +16,9 @@ public:
     //player is the only one with hp
     void setHp(int h);
     int getHp();
+
+    void setCoin(int c);
+    int getcoin();
 
 
 };

@@ -108,4 +108,6 @@ void collisionDetection();
 
 void renderEntity();
 void enShoot();
+
+void displayCoin();
 #endif // _GAME_H

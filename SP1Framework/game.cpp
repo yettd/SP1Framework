@@ -275,11 +275,33 @@ void collisionDetection()
                     {
                         if (en[j]->getTag() == 43)
                         {
+                            if (((enemy*)en[i])->getAI() == 0)
+                            {
+                                ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 2);
+                            }
+                            else if (((enemy*)en[i])->getAI() == 1)
+                            {
+                                ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 10);
+                            }
+                            else if (((enemy*)en[i])->getAI() == 2)
+                            {
+                                ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 5);
+                            }
+
                             delete en[j];
                             delete en[i];
 
-                            en.erase(en.begin() + j);
-                            en.erase(en.begin() + i);
+                            if (j < i)
+                            {
+                                en.erase(en.begin() + i);
+                                en.erase(en.begin() + j);
+                            }
+                            else
+                            {
+                                en.erase(en.begin() + j);
+                                en.erase(en.begin() + i);
+                            }
+                           
                             size = en.size();
                         }
                     }
@@ -456,11 +478,11 @@ void moveEnemy()
             }
             else if (e->getAI() == 1)
             {
-                e->AggresiveAI(en[0]->getCoordX(), en[0]->getCoordY(), g_Console.getConsoleSize().X, g_Console.getConsoleSize().Y);
+                e->AggresiveAI(en[0]->getCoordX(), en[0]->getCoordY(), g_Console.getConsoleSize().X-1, g_Console.getConsoleSize().Y-1);
             }
             else if (e->getAI() == 2) 
             {
-                e->SmartAI(g_Console.getConsoleSize().X, g_Console.getConsoleSize().Y);
+                e->SmartAI(g_Console.getConsoleSize().X-1, g_Console.getConsoleSize().Y-1);
             }
         }
     }
@@ -612,6 +634,7 @@ void renderGame()
     //renderEnemy();      // renders enemies
     displayScored();
     displayWave();
+    displayCoin();
 }
 
 void renderUpgradeScreen()
@@ -778,7 +801,17 @@ void renderInputEvents()
     
 }
 
-
+void displayCoin()
+{
+    COORD c;
+    c.X = g_Console.getConsoleSize().X / 2/2;
+    c.Y = 0;
+    std::string s;
+    std::ostringstream ss;
+    int WS = ((Player*)en[0])->getcoin();
+    ss << "Coin : " << std::to_string(WS);
+    g_Console.writeToBuffer(c, ss.str(), 0x17);
+}
 
 
 void displayWave()

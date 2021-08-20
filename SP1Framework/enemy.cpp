@@ -194,7 +194,7 @@ void enemy::SmartAI(int cx, int cy)
 				movement(2);
 			}
 		}
-		if (getCoordX() <= 0 || getCoordX() >= cx-1 || getCoordY() >= cy || getCoordY() <= 1)
+		if (getCoordX() <= 0 || getCoordX() >= cx || getCoordY() >= cy || getCoordY() <= 1)
 		{
 			wall = true;
 		}
@@ -213,7 +213,7 @@ void enemy::SmartAI(int cx, int cy)
 				movement(2);
 			}
 		}
-		else if (getCoordX() == cx-1)
+		else if (getCoordX() == cx)
 		{
 			//most right
 			if (LR == 1)
@@ -237,7 +237,7 @@ void enemy::SmartAI(int cx, int cy)
 				movement(3);
 			}
 		}
-		else if (getCoordY() == cy-1)
+		else if (getCoordY() == cy)
 		{
 			
 			//most down

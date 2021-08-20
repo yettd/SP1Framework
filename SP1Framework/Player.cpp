@@ -3,6 +3,7 @@
 Player::Player()
 {
 	setSym(0);
+	setCoin(0);
 	setCoordX(0);
 	setCoordY(0);
 	SetFireRate(1);
@@ -90,4 +91,14 @@ void Player::setHp(int h)
 int Player::getHp()
 {
 	return hp;
+}
+
+void Player::setCoin(int c)
+{
+	coin = c;
+}
+
+int Player::getcoin()
+{
+	return coin;
 }
