@@ -362,6 +362,7 @@ void updateGame()       // gameplay logic
 {
     if (((Player*)en[0])->getHp() == 0)
     {
+        en.clear();
         g_eGameState = S_LOSE;
     }
 
@@ -386,7 +387,7 @@ void upgradeScreenInput()
 {
     if (g_skKeyEvent[K_NUM1].keyDown)
     {
-        if (((Player*)en[0])->getcoin() > ug1)
+        if (((Player*)en[0])->getcoin() >= ug1)
         {
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin()-ug1);
             float fireRate = en[0]->getFireRate();
@@ -415,7 +416,7 @@ void upgradeScreenInput()
     }
     else if (g_skKeyEvent[K_NUM2].keyDown)
     {
-        if (((Player*)en[0])->getcoin() > ug2)
+        if (((Player*)en[0])->getcoin() >= ug2)
         {
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug2);
             float speed = en[0]->getSpeed();
@@ -445,7 +446,7 @@ void upgradeScreenInput()
     }
     else if (g_skKeyEvent[K_NUM3].keyDown)
     {
-        if (((Player*)en[0])->getcoin() > ug3)
+        if (((Player*)en[0])->getcoin() >= ug3)
         {
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug3);
             ((Player*)en[0])->setmHp(((Player*)en[0])->getmHp()+1);
@@ -496,6 +497,7 @@ void loseScreenInput()
         (((Player*)en[0])->setCoin(0));
         wave = 1;
         score = 0;
+        en.push_back(new Player);
         g_eGameState = S_GAME;
         clearEnemy();
         updateMaxenemy();
