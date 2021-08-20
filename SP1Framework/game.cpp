@@ -344,7 +344,7 @@ void update(double dt)
             break;
         case S_GAME: updateGame();// gameplay logic when we are in the game
             break;
-        case S_LOSE:
+        case S_LOSE: loseScreenInput();
             break;
         case S_UPGRADESCREEN: upgradeScreenInput();
             break;
@@ -360,6 +360,11 @@ void splashScreenWait()    // waits for time to pass in splash screen
 
 void updateGame()       // gameplay logic
 {
+    if (((Player*)en[0])->getHp() == 0)
+    {
+        g_eGameState = S_LOSE;
+    }
+
 
     if (score >= 5)
     {
@@ -480,6 +485,26 @@ void upgradeScreenInput()
         updateMaxenemy();
         spawnEnemy();
         current = 0;
+    }
+}
+
+void loseScreenInput()
+{
+    if (g_skKeyEvent[K_SPACE].keyDown)
+    {
+        ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
+        (((Player*)en[0])->setCoin(0));
+        wave = 1;
+        score = 0;
+        g_eGameState = S_GAME;
+        clearEnemy();
+        updateMaxenemy();
+        spawnEnemy();
+        current = 0;
+    }
+    else if (g_skKeyEvent[K_ESCAPE].keyDown)
+    {
+        g_bQuitGame = true;
     }
 }
 
@@ -712,7 +737,7 @@ void renderSplashScreen()  // renders the splash screen
     g_Console.writeToBuffer(c, "WASD to move", 0x09);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 9;
-    g_Console.writeToBuffer(c, "LEFT CLICK TO FIRE", 0x09);
+    g_Console.writeToBuffer(c, "SPACEBAR TO FIRE", 0x09);
 }
 
 void renderGame()
@@ -769,6 +794,9 @@ void renderLoseScreen()
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 9;
     g_Console.writeToBuffer(c, "PRESS SPACE TO PLAY AGAIN", 0x09);
+    c.Y += 1;
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    g_Console.writeToBuffer(c, "PRESS ESCAPE TO QUIT", 0x09);
 }
 
 void renderMap()
