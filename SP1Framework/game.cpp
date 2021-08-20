@@ -493,11 +493,15 @@ void loseScreenInput()
 {
     if (g_skKeyEvent[K_SPACE].keyDown)
     {
-        ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
-        (((Player*)en[0])->setCoin(0));
+        en.clear();
         wave = 1;
         currTime = defTime;
         en.push_back(new Player);
+        en[0]->setSym(94);
+        en[0]->setspeed(0.1);
+        en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
+        en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
+        en[0]->setm_bActive(true);
         g_eGameState = S_GAME;
         clearEnemy();
         updateMaxenemy();
