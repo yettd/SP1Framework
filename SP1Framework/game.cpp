@@ -16,7 +16,8 @@ int face = 1;
 int lastface = 1;
 double  g_dElapsedTime;
 double  g_dDeltaTime;
-float score = 0;
+float defTime = 5;
+float currTime = 0;
 int wave = 1;
 int maxenemy = 0;
 int current = 0;
@@ -49,6 +50,7 @@ void init( void )
     srand(time(NULL));
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
+    currTime = defTime;
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
     en.push_back(new Player);
@@ -244,7 +246,7 @@ void displayScored()
     c.Y = 0;
     std::string s;
     std::ostringstream ss;
-    int WS= floor(score);
+    int WS= floor(currTime);
     int hp = ((Player*)en[0])->getHp();
     ss <<"TIME : "<< std::to_string(WS)<<"  HP:"<< std::to_string(hp);
 
@@ -253,7 +255,7 @@ void displayScored()
 
 void updateScord(int s)
 {
-    score += s;
+    currTime += s;
 }
 
 void collisionDetection()
@@ -365,14 +367,12 @@ void updateGame()       // gameplay logic
         en.clear();
         g_eGameState = S_LOSE;
     }
-
-
-    if (score >= 5)
+    if (currTime <= 0)
     {
         g_eGameState = S_UPGRADESCREEN;
     }
 
-    score += 0.01;
+    currTime -= 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
@@ -393,7 +393,7 @@ void upgradeScreenInput()
             float fireRate = en[0]->getFireRate();
             fireRate -= 0.1;
             en[0]->SetFireRate(fireRate);
-            score = 0;
+            currTime = defTime;
             en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
             en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
             g_eGameState = S_GAME;
@@ -422,7 +422,7 @@ void upgradeScreenInput()
             float speed = en[0]->getSpeed();
             speed += 0.05;
             en[0]->setspeed(speed);
-            score = 0;
+            currTime = defTime;
             en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
             en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
             g_eGameState = S_GAME;
@@ -450,7 +450,7 @@ void upgradeScreenInput()
         {
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug3);
             ((Player*)en[0])->setmHp(((Player*)en[0])->getmHp()+1);
-            score = 0;
+            currTime = defTime;
             en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
             en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
             g_eGameState = S_GAME;
@@ -473,10 +473,10 @@ void upgradeScreenInput()
     }
     else if (g_skKeyEvent[K_NUM4].keyDown)
     {
-        float speed = en[0]->getSpeed();
-        speed += 0.05;
-        en[0]->setspeed(speed);
-        score = 0;
+        //float speed = en[0]->getSpeed();
+        //speed += 0.05;
+        //en[0]->setspeed(speed);
+        currTime = defTime;
         en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
@@ -495,7 +495,7 @@ void loseScreenInput()
     {
         en.clear();
         wave = 1;
-        score = 0;
+        currTime = defTime;
         en.push_back(new Player);
         en[0]->setSym(94);
         en[0]->setspeed(0.1);
@@ -739,13 +739,14 @@ void renderSplashScreen()  // renders the splash screen
 {
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
-    c.X = c.X / 2 - 9;
+    c.Y +=  2;
+    c.X = c.X / 2 - 7;
     g_Console.writeToBuffer(c, "BATTLESHIP", 0x03);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
-    g_Console.writeToBuffer(c, "WASD to move", 0x09);
+    c.X = g_Console.getConsoleSize().X / 2 - 8;
+    g_Console.writeToBuffer(c, "WASD TO MOVE", 0x09);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 10;
     g_Console.writeToBuffer(c, "SPACEBAR TO FIRE", 0x09);
 }
 
@@ -772,22 +773,22 @@ void renderUpgradeScreen()
     ss.str("");
     ss << "1. Increase Fire Rate " << "( " << ug1 << " coin )";
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 18;
     g_Console.writeToBuffer(c, ss.str(), 0x09);
     c.Y += 1;
     ss.str("");
     ss <<  "2. Increase Movement Speed" << "( " << ug2 << " coin )";
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 20;
     g_Console.writeToBuffer(c,ss.str(), 0x09);
     c.Y += 1;
     ss.str("");
     ss << "3. Increase Max health" << "( " << ug3 << " coin )";
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 18;
     g_Console.writeToBuffer(c, ss.str(), 0x09);
     c.Y += 1;
     ss.str("");
     ss << "4. skip";
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 6;
     g_Console.writeToBuffer(c, ss.str(), 0x09);
 }
 
@@ -946,14 +947,28 @@ void renderInputEvents()
 
 void displayCoin()
 {
-    COORD c;
-    c.X = g_Console.getConsoleSize().X / 2/2;
-    c.Y = 0;
-    std::string s;
-    std::ostringstream ss;
-    int WS = ((Player*)en[0])->getcoin();
-    ss << "Coin : " << std::to_string(WS);
-    g_Console.writeToBuffer(c, ss.str(), 0x17);
+    if (g_eGameState == S_GAME)
+    {
+        COORD c;
+        c.X = g_Console.getConsoleSize().X / 4;
+        c.Y = 0;
+        std::string s;
+        std::ostringstream ss;
+        int WS = ((Player*)en[0])->getcoin();
+        ss << "Coin : " << std::to_string(WS);
+        g_Console.writeToBuffer(c, ss.str(), 0x17);
+    }
+    else if (g_eGameState == S_UPGRADESCREEN)
+    {
+        COORD c;
+        c.X = g_Console.getConsoleSize().X / 2 - 6;
+        c.Y = 4;
+        std::string s;
+        std::ostringstream ss;
+        int WS = ((Player*)en[0])->getcoin();
+        ss << "Coin : " << std::to_string(WS);
+        g_Console.writeToBuffer(c, ss.str(), 0x17);
+    }
 }
 
 
