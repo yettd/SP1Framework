@@ -544,7 +544,7 @@ void moveCharacter()
     }
     if (g_skKeyEvent[K_SPACE].keyDown && en[0]->getm_activr() == true)
     {
-        createBullet(en[0]->getCoordX(), en[0]->getCoordY(),43,lastface);
+        createBullet(en[0]->getCoordX(), en[0]->getCoordY(),43,lastface, 3);
         en[0]->setm_bActive(false);
 
     }
@@ -572,7 +572,7 @@ void enShoot()
             enemy* e = (enemy*)en[i];
             if (e->getm_activr() == true&& e->getAI()!=0)
             {
-                createBullet(e->getCoordX(), e->getCoordY(), 45, e->shootDir(en[0]->getCoordX(), en[0]->getCoordY()));
+                createBullet(e->getCoordX(), e->getCoordY(), 45, e->shootDir(en[0]->getCoordX(), en[0]->getCoordY()), e->getAI());
                 e->SetFireC(0);
                 e->setm_bActive(false);
             }
@@ -580,9 +580,12 @@ void enShoot()
     }
 }
 
-void createBullet(int x,int y,char t,int dir)
+void createBullet(int x,int y,char t,int dir, int i)
 {
     en.push_back(new bullet(x, y, dir,t));
+    if (i == 3) PlaySound(TEXT("playerLaserSFX.wav"), NULL, SND_ASYNC);
+    else if (i == 1) PlaySound(TEXT("pewSFX.wav"), NULL, SND_ASYNC);
+    else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
 }
 void moveEnemy()
 {

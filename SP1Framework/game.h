@@ -91,7 +91,7 @@ void updateScord(int s);
 
 void renderBullet();
 void moveBullet();
-void createBullet(int x, int y, char t, int dir);
+void createBullet(int x, int y, char t, int dir, int i);
 void destroyBullet(int i);
 
 void rechargeFire();

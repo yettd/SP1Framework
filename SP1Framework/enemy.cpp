@@ -328,16 +328,19 @@ void enemy::setAI()
 	}
 	if (ran <= 50)
 	{
+		//Dumb
 		AI = 0;
 		setspeed(0.05);
 	}
 	else if (ran <= 80)
 	{
+		//Aggressive
 		AI = 1;
 		setspeed(0.015);
 	}
 	else
 	{
+		//Smart
 		AI = 2;
 		LR = rand() % 2 + 1;
 	}
