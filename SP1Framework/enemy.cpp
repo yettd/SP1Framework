@@ -4,15 +4,13 @@
 
 enemy::enemy()
 {
-	setRandX();
-	setRandY();
 	setAI();
 	setTag('E');
 	setm_bActive(false);
 	SetFireRate(1);
 	SetFireC(0);
 	setspeed(0.075);
-	setWall();
+	setCoord();
 
 	wall = false;
 	dy = 0;
@@ -81,25 +79,36 @@ void enemy::movement(int dir)
 		}
 	}
 }
-// 1 - 79
-void enemy::setWall()
+
+void enemy::setCoord()
 {
-	if ((getCoordX() + 21) < (getCoordY() + 76))
+	int randomNumber;
+	randomNumber = (rand() % 4) + 1;
+
+	//Top Wall
+	if (randomNumber == 1)
 	{
-		if (getCoordX() <= 39)
-		{
-			setCoordX(1);
-		}
-		else setCoordX(79);
+		setRandX();
+		setCoordY(1);
 	}
-	else
+	//Bottom Wall
+	else if (randomNumber == 2)
 	{
-		if (getCoordY() <= 12)
-		{
-			setCoordY(1);
-		}
-		else setCoordY(24);
+		setRandX();
+		setCoordY(24);
 	}
+	else if (randomNumber == 3)
+	{
+		setRandY();
+		setCoordX(1);
+	}
+	else if (randomNumber == 4)
+	{
+		setRandY();
+		setCoordX(79);
+	}
+
+
 }
 void enemy::setRandX()
 {
@@ -107,7 +116,7 @@ void enemy::setRandX()
 	randomNumber = (rand() % 79) + 1;
 	setCoordX(randomNumber);
 }
-// 1 - 24
+
 void enemy::setRandY()
 {
 	int randomNumber;

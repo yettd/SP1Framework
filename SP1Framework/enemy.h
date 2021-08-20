@@ -14,7 +14,7 @@ private:
 public:
     enemy();
     void movement(int dir);
-    void setWall();
+    void setCoord();
     void setRandX();
     void setRandY();
     int getDirXfromPlayer(int x);
