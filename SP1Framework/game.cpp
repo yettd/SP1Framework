@@ -11,16 +11,18 @@
 #include "Player.h"
 #include "bullet.h"
 #include "enemy.h"
-
+#include "boss.h"
 float spawnCounter = 2;
 float spawnRate = spawnCounter;
 int face = 1;
 int lastface = 1;
+
+
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime = 5;
 float currTime = 0;
-int wave = 1;
+int wave = 10;
 int maxenemy = 0;
 int current = 0;
 
@@ -371,7 +373,17 @@ void updateGame()       // gameplay logic
         g_eGameState = S_UPGRADESCREEN;
     }
 
+    if (wave % 10 != 0)
+    {
     spawnEnemy();
+    }
+    else
+    {
+        if (en.size() == 1)
+        {
+            en.push_back(new boss(g_Console.getConsoleSize()));
+        }
+    }
     currTime -= 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
@@ -836,19 +848,51 @@ void renderEntity()
 {
     for (int i = 0; i < en.size(); i++)
     {
-        WORD charColor= 0x17;
-        if (en[i]->getTag() == 'P')
+        if (en[i]->getTag() != 'B')
         {
-            charColor = 0x17;
+            WORD charColor = 0x17;
+            if (en[i]->getTag() == 'P')
+            {
+                charColor = 0x17;
+            }
+            else
+            {
+                charColor = 0x0C;
+            }
+            COORD temp;
+            temp.X = en[i]->getCoordX();
+            temp.Y = en[i]->getCoordY();
+            g_Console.writeToBuffer(temp, en[i]->getSym(), charColor);
         }
         else
         {
-            charColor = 0x0C;
+           renderBOSS(i);
         }
-        COORD temp;
-        temp.X = en[i]->getCoordX();
-        temp.Y = en[i]->getCoordY();
-        g_Console.writeToBuffer(temp, en[i]->getSym(), charColor);
+    }
+}
+void renderBOSS(int a)
+{
+    boss* b = (boss*)en[a];
+    WORD charColor = 0x0C;
+
+    COORD temp;
+    temp.X = b->getCoordX();
+    temp.Y = b->getCoordY();
+    temp.X -= 4;
+    int temp2 = temp.X;
+    
+    for (int i = 0; i < 5; i++)
+    {
+        for (int j = 0; j < 5; j++)
+        {
+            if (b->getshape(j,i) == 1)
+            {
+            g_Console.writeToBuffer(temp, "0 ", charColor);
+            }
+            temp.X += 2;
+        }
+        temp.X =temp2;
+        temp.Y += 1;
     }
 }
 

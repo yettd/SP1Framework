@@ -4,7 +4,7 @@
 class enemy :
     public entity
 {
-    static int count;
+    
 private:
     int AI;
     bool wall;

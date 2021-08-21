@@ -248,7 +248,6 @@ void enemy::SmartAI(int cx, int cy)
 		}
 		else if (getCoordY() == cy)
 		{
-			
 			//most down
 			if (LR == 1)
 			{
@@ -313,12 +312,12 @@ int enemy::shootDir(int x, int y)
 }
 
 
-int enemy::getDirXfromPlayer(int x)//dumbAI
+int enemy::getDirXfromPlayer(int x)
 {
 	int disX = x - getCoordX();
 	return disX;
 }
-int enemy::getDirYfromPlayer(int y)//dumbAI
+int enemy::getDirYfromPlayer(int y)
 {
 	int disY = y - getCoordY();
 	return disY;
