@@ -22,7 +22,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime = 5;
 float currTime = 0;
-int wave = 10;
+int wave = 1;
 int maxenemy = 0;
 int current = 0;
 
@@ -400,7 +400,7 @@ void updateGame()       // gameplay logic
             en.push_back(new boss(g_Console.getConsoleSize()));
         }
     }
-    //currTime -= 0.01;
+    currTime -= 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
