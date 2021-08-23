@@ -8,7 +8,13 @@ private:
 	int hp;
 	COORD c;
 	COORD player;
-	int bossFace;
+	int bossDir;
+	int bossface;
+
+	COORD MAPSIZE;
+
+	int moveDir;
+
 	bool inverse=false;
 
 	int shape[8][5][5]={
@@ -67,6 +73,8 @@ public:
 	void movement(int dir);
 	int getshape(int x,int y);
 	COORD getCord();
+
+	void ATTACK1();
 
 	void getPlayer(COORD p);
 

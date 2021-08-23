@@ -928,10 +928,7 @@ void renderBOSS(int a)
         temp.X =temp2;
         temp.Y += 1;
     }
-    if (!b->getWall(g_Console.getConsoleSize()))
-    {
-    b->movement(1);
-    }
+    b->ATTACK1();
 }
 
 void renderCharacter()
