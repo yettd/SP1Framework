@@ -112,7 +112,7 @@ void renderEntity();
 void enShoot();
 
 void displayCoin();
-
+void IframeCool();
 //boss
 void renderBOSS(int a);
 #endif // _GAME_H

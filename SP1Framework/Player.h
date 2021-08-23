@@ -8,6 +8,8 @@ private:
     int hp;
     int Mhp;
     int coin;
+    bool iframe;
+
 public:
 
     Player();
@@ -20,6 +22,8 @@ public:
     int getmHp();
     void setCoin(int c);
     int getcoin();
+    bool getiframe();
+    void setiframe(bool iFrame);
 
 
 };

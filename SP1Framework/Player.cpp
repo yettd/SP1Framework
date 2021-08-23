@@ -11,6 +11,7 @@ Player::Player()
 	setTag('P');
 	setm_bActive(true);
 	SetFireC(0);
+	setiframe(true);
 	mx = 0;
 	my = 0;
 	hp = 3;
@@ -110,4 +111,14 @@ void Player::setCoin(int c)
 int Player::getcoin()
 {
 	return coin;
+}
+
+bool Player::getiframe()
+{
+	return iframe;
+}
+
+void Player::setiframe(bool iFrame)
+{
+	iframe = iFrame;
 }

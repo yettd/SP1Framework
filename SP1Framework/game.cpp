@@ -22,9 +22,11 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime = 5;
 float currTime = 0;
-int wave = 1;
+int wave = 10;
 int maxenemy = 0;
 int current = 0;
+
+float iframeCD = 0;
 
 
 int ug1 = 5, ug2 = 5, ug3 = 5;
@@ -257,14 +259,25 @@ void displayScored()
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
 
+void IframeCool()
+{
+    if (iframeCD >= 1 && ((Player*)en[0])->getiframe()==false)
+    {
+        ((Player*)en[0])->setiframe(true);
+        iframeCD =0;
+    }
+    else if(((Player*)en[0])->getiframe() == false)
+    {
+        iframeCD += 0.01;
+    }
+}
 
 
 void collisionDetection()
 {
-    int size = en.size();
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < en.size(); i++)
     {
-        for (int j = 0; j < size; j++)
+        for (int j = 0; j < en.size(); j++)
         {
             if (i != j)
             {
@@ -276,14 +289,17 @@ void collisionDetection()
                         {
                             delete en[j];
                             en.erase(en.begin() + j);
-                            ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
-                            if (((Player*)en[0])->getHp() <= 0)
+                            if (((Player*)en[i])->getiframe())
                             {
-                                en.clear();
-                                g_eGameState = S_LOSE;
+                                ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
+                                ((Player*)en[i])->setiframe(false);
+                                if (((Player*)en[0])->getHp() <= 0)
+                                {
+                                    en.clear();
+                                    g_eGameState = S_LOSE;
+                                    break;
+                                }
                             }
-                           
-                            size = en.size();
                         }
                     }
                     else if (en[i]->getTag() == 'E')
@@ -316,8 +332,6 @@ void collisionDetection()
                                 en.erase(en.begin() + j);
                                 en.erase(en.begin() + i);
                             }
-                           
-                            size = en.size();
                         }
                     }
                     
@@ -386,13 +400,14 @@ void updateGame()       // gameplay logic
             en.push_back(new boss(g_Console.getConsoleSize()));
         }
     }
-    currTime -= 0.01;
+    //currTime -= 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
     moveEnemy();
     moveBullet();
     enShoot();
+    IframeCool();
     collisionDetection();
    // spawnEnemy();
 }
@@ -858,7 +873,16 @@ void renderEntity()
             WORD charColor = 0x17;
             if (en[i]->getTag() == 'P')
             {
-                charColor = 0x17;
+                if (((Player*)en[i])->getiframe())
+                {
+                    charColor = 0x17;
+
+                }
+                else
+                {
+                    charColor = 0x6F;
+
+                }
             }
             else if (en[i]->getTag() == 43)
             {
@@ -906,8 +930,7 @@ void renderBOSS(int a)
     }
     if (!b->getWall(g_Console.getConsoleSize()))
     {
-
-    b->movement(8);
+    b->movement(1);
     }
 }
 
@@ -1029,7 +1052,6 @@ void displayCoin()
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
 }
-
 
 void displayWave()
 {

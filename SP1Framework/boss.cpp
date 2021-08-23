@@ -14,6 +14,7 @@ boss::boss(COORD cord)
 	//SetFireRate(1);
 	//SetFireC(0);
 	setspeed(0.075);
+	player = { 0,0 };
 
 }
 
@@ -24,13 +25,20 @@ int boss::getshape(int x, int y)
 COORD boss::getCord()
 {
 	return c;
+	
 }
-bool boss::getWall(COORD wall)
+
+void boss:: getPlayer(COORD p)
+{
+	player.X = getCoordX() - p.X;
+	player.Y = getCoordY() - p.Y;
+}
+
+bool boss::getWall(COORD wall)//attack 1 charge to player
 {
 	COORD SideToLook={0,0};
 	if (bossFace == 0)
 	{
-
 		SideToLook.X = getCoordX();
 		SideToLook.Y = getCoordY() - 2;
 		
@@ -84,6 +92,7 @@ bool boss::getWall(COORD wall)
 		SideToLook.Y = getCoordY() + 2;
 		
 	}
+
 	if (SideToLook.X == 1 || SideToLook.X == wall.X - 1 || SideToLook.Y == wall.Y - 1 ||
 		SideToLook.Y == 1)
 	{
@@ -99,7 +108,6 @@ void boss::movement(int dir)
 	if (dir == 1)
 	{
 		//up
-		bossFace = 0;
 		if (my > 0)
 		{
 			my = -1;
@@ -116,7 +124,6 @@ void boss::movement(int dir)
 	else if (dir == 2)
 	{
 
-		bossFace = 1;
 		//down
 		if (my < 0)
 		{
@@ -134,7 +141,6 @@ void boss::movement(int dir)
 	else if (dir == 3)
 	{
 
-		bossFace = 3;
 
 		//right
 		if (mx < 0)
@@ -152,7 +158,6 @@ void boss::movement(int dir)
 	}
 	else if (dir == 4)
 	{
-		bossFace = 2;
 		//left
 		if (mx > 0)
 		{
@@ -169,7 +174,6 @@ void boss::movement(int dir)
 	}
 	else if (dir == 5)
 	{
-		bossFace = 4;
 		//rightup
 		if (mx < 0)
 		{
@@ -198,7 +202,6 @@ void boss::movement(int dir)
 	}
 	else if (dir == 6)
 	{
-	bossFace = 6;
 		//leftdown
 		if (mx > 0)
 		{
@@ -227,7 +230,6 @@ void boss::movement(int dir)
 	}
 	else if (dir == 7)
 	{
-	bossFace = 5;
 		//leftup
 		if (mx > 0)
 		{
@@ -256,7 +258,6 @@ void boss::movement(int dir)
 	}
 	else if (dir == 8)
 	{
-	bossFace = 7;
 		//downright
 		if (mx < 0)
 		{
