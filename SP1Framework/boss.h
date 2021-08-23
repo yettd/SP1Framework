@@ -7,6 +7,7 @@ class boss:
 private:
 	int hp;
 	COORD c;
+	int bossFace;
 	int shape[8][5][5]={
 		{{0,0,1,0,0},
 		 {0,1,1,1,0},
@@ -63,5 +64,7 @@ public:
 	void movement(int dir);
 	int getshape(int x,int y);
 	COORD getCord();
+
+	bool getWall(COORD wall);
 };
 

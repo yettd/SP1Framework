@@ -22,7 +22,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime = 5;
 float currTime = 0;
-int wave = 10;
+int wave = 1;
 int maxenemy = 0;
 int current = 0;
 
@@ -277,6 +277,12 @@ void collisionDetection()
                             delete en[j];
                             en.erase(en.begin() + j);
                             ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
+                            if (((Player*)en[0])->getHp() <= 0)
+                            {
+                                en.clear();
+                                g_eGameState = S_LOSE;
+                            }
+                           
                             size = en.size();
                         }
                     }
@@ -363,11 +369,7 @@ void splashScreenWait()    // waits for time to pass in splash screen
 
 void updateGame()       // gameplay logic
 {
-    if (((Player*)en[0])->getHp() <= 0)
-    {
-        en.clear();
-        g_eGameState = S_LOSE;
-    }
+    
     if (currTime <= 0)
     {
         g_eGameState = S_UPGRADESCREEN;
@@ -661,8 +663,11 @@ void spawnEnemy()
 {
     if (spawnRate >= spawnCounter)
     {
+        for (int i = 0; i < 3; i++)
+        {
         en.push_back(new enemy);
         spawnRate = 0;
+        }
     }
     else
     {
@@ -855,6 +860,10 @@ void renderEntity()
             {
                 charColor = 0x17;
             }
+            else if (en[i]->getTag() == 43)
+            {
+                charColor = 0x17;
+            }
             else
             {
                 charColor = 0x0C;
@@ -879,6 +888,7 @@ void renderBOSS(int a)
     temp.X = b->getCoordX();
     temp.Y = b->getCoordY();
     temp.X -= 4;
+    temp.Y -= 2;
     int temp2 = temp.X;
     
     for (int i = 0; i < 5; i++)
@@ -893,6 +903,11 @@ void renderBOSS(int a)
         }
         temp.X =temp2;
         temp.Y += 1;
+    }
+    if (!b->getWall(g_Console.getConsoleSize()))
+    {
+
+    b->movement(8);
     }
 }
 
@@ -998,6 +1013,7 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
+        
         ss << "Coin : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
