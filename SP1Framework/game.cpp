@@ -20,7 +20,7 @@ int lastface = 1;
 
 double  g_dElapsedTime;
 double  g_dDeltaTime;
-float defTime = 5;
+float defTime =10 ;
 float currTime = 0;
 int wave = 1;
 int maxenemy = 0;
@@ -279,7 +279,7 @@ void collisionDetection()
     {
         for (int j = 0; j < en.size(); j++)
         {
-            if (i != j)
+            if (i != j && j<en.size())
             {
                 if (en[i]->getCoordX() == en[j]->getCoordX() && en[i]->getCoordY() == en[j]->getCoordY())
                 {
@@ -400,7 +400,7 @@ void updateGame()       // gameplay logic
             en.push_back(new boss(g_Console.getConsoleSize()));
         }
     }
-    currTime -= 0.01;
+  //  currTime -= 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
