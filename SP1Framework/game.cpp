@@ -280,7 +280,7 @@ void collisionDetection()
     {
         for (int j = 0; j < en.size(); j++)
         {
-            if (i != j && j<en.size())
+            if (i != j)
             {
                 if (en[i]->getCoordX() == en[j]->getCoordX() && en[i]->getCoordY() == en[j]->getCoordY())
                 {
@@ -301,6 +301,7 @@ void collisionDetection()
                                     break;
                                 }
                             }
+                            j--;
                         }
                     }
                     else if (en[i]->getTag() == 'E')
@@ -333,7 +334,8 @@ void collisionDetection()
                                 en.erase(en.begin() + j);
                                 en.erase(en.begin() + i);
                             }
-                            break;
+                            i--;
+                            j--;
                         }
                     }
                     

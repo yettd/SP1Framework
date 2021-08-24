@@ -15,7 +15,7 @@ boss::boss(COORD cord)
 	setm_bActive(false);
 	SetFireRate(1);
 	SetFireC(0);
-	setspeed(0.25);
+	setspeed(0.15);
 	player = { 0,0 };
 	inverse = false;
 
@@ -117,7 +117,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 
 		if (moveDir == 1 || moveDir == 2)
 		{
-			if (getCoordY() % 5 == 0)
+			if (getCoordY() % 3 == 0)
 			{
 				setm_bActive(true);
 			}
