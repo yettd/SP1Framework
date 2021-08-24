@@ -414,6 +414,7 @@ void updateGame()       // gameplay logic
         if (en.size() == 1)
         {
             en.push_back(new boss(g_Console.getConsoleSize()));
+            currTime = 30;
         }
         bossAttacks();
     }
@@ -426,12 +427,7 @@ void updateGame()       // gameplay logic
     enShoot();
     IframeCool();
     collisionDetection();
-<<<<<<< HEAD
     //spawnEnemy();
-=======
-
-   // spawnEnemy();
->>>>>>> ecd660aad63fc29671945dd95eafcfcfa7d92082
 }
 
 float bossAttackTimer = 5;//how long before next move
