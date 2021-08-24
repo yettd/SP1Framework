@@ -45,6 +45,7 @@ enum EGAMESTATES
     S_SPLASHSCREEN,
     S_GAME,
     S_LOSE,
+    S_WIN,
     S_UPGRADESCREEN,
     S_COUNT
 };
@@ -66,6 +67,7 @@ void splashScreenWait();    // waits for time to pass in splash screen
 void updateGame();          // gameplay logic
 void upgradeScreenInput();
 void loseScreenInput();
+void winScreenInput();
 void moveCharacter();       // moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void clearScreen();         // clears the current screen and draw from scratch 
@@ -73,6 +75,7 @@ void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderUpgradeScreen();
 void renderLoseScreen();
+void renderWinScreen();
 void renderMap();           // renders the map to the buffer first
 void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
