@@ -4,7 +4,7 @@ boss::boss(COORD cord)
 {
 	hp = 10;
 	bossDir = 0;
-	bossface = 0;
+	bossface = 1;
 	setTag('B');
 	int face = 0;
 	setCoordX(cord.X/2);
@@ -20,6 +20,7 @@ boss::boss(COORD cord)
 	inverse = false;
 
 	moveDir = 1;
+	attack = -1;
 
 }
 
@@ -33,13 +34,109 @@ COORD boss::getCord()
 	
 }
 
+void boss::idel()
+{
+	moveDir = 1;
+	inverse = false;
+	setm_bActive(false);
+	int face = 0;
+	if (getCoordX() != (MAPSIZE.X / 2) || getCoordY() != (MAPSIZE.Y / 2))
+	{
+		//get direction of center
+		int centerX = (MAPSIZE.X / 2) - getCoordX();
+		int centerY = (MAPSIZE.Y / 2) - getCoordY();
+		if (centerX > 0)
+		{
+			face += 3;
+			movement(3);
+		}
+		else if (centerX < 0)
+		{
+			face -= 3;
+			movement(4);
+		}
+		if (centerY < 0)
+		{
+
+			face +=1;
+			movement(1);
+		}
+		else if (centerY > 0)
+		{
+
+			face -= 1;
+			movement(2);
+		}
+
+		if (face == 1)
+		{
+			bossface = 0;
+		}
+		else if (face == -1)
+		{
+			bossface = 1;
+		}
+		else if (face == 3)
+		{
+			bossface = 3;
+		}
+		else if (face == -3)
+		{
+			bossface = 2;
+		}
+		else if (face == 4)
+		{
+			bossface = 4;
+		}
+		else if (face == -4)
+		{
+			bossface = 6;
+		}
+		else if (face == 2)
+		{
+			bossface = 7;
+		}
+		else if (face == -2)
+		{
+			bossface = 5;
+		}
+
+	}
+	else
+	{
+		bossface = 1;
+	}
+}
+
 void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 {
 	inverse = true;
-
 	if (getWall(MAPSIZE)==false)
 	{
 		movement(moveDir);
+
+		if (moveDir == 1 || moveDir == 2)
+		{
+			if (getCoordY() % 5 == 0)
+			{
+				setm_bActive(true);
+			}
+			else
+			{
+				setm_bActive(false);
+			}
+		}
+		else if (moveDir == 3 || moveDir == 4)
+		{
+			if (getCoordX() % 5 == 0)
+			{
+				setm_bActive(true);
+			}
+			else
+			{
+				setm_bActive(false);
+			}
+		}
 	}
 	else
 	{
@@ -221,6 +318,18 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 		return false;
 	}
 }
+void boss::setAttack(int style)
+{
+	attack = style;
+}
+int boss::getAttack()
+{
+	return attack;
+}
+int boss::getFace()
+{
+	return bossface;
+}
 void boss::movement(int dir)
 {
 	if (dir == 1)
@@ -289,118 +398,6 @@ void boss::movement(int dir)
 			setCoordX(getCoordX() - 1);
 
 			mx = 0;
-		}
-	}
-	else if (dir == 5)
-	{
-		//rightup
-		if (mx < 0)
-		{
-			mx = 1;
-		}
-		mx += getSpeed();
-		if (floor(mx) >= 1)
-		{
-			//Beep(1440, 30);
-			setCoordX(getCoordX() + 1);
-
-			mx = 0;
-		}
-		if (my > 0)
-		{
-			my = -1;
-		}
-
-		my -= getSpeed();
-		if (ceil(my) <= -1)
-		{
-			setCoordY(getCoordY() - 1);
-
-			my = 0;
-		}
-	}
-	else if (dir == 6)
-	{
-		//leftdown
-		if (mx > 0)
-		{
-			mx = -1;
-		}
-		mx -= getSpeed();
-		if (ceill(mx) <= -1)
-		{
-			//Beep(1440, 30);
-			setCoordX(getCoordX() - 1);
-
-			mx = 0;
-		}
-		if (my < 0)
-		{
-			my = 1;
-		}
-		my += getSpeed();
-		if (floor(my) >= 1)
-		{
-			//Beep(1440, 30);
-			setCoordY(getCoordY() + 1);
-
-			my = 0;
-		}
-	}
-	else if (dir == 7)
-	{
-		//leftup
-		if (mx > 0)
-		{
-			mx = -1;
-		}
-		mx -= getSpeed();
-		if (ceill(mx) <= -1)
-		{
-			//Beep(1440, 30);
-			setCoordX(getCoordX() - 1);
-
-			mx = 0;
-		}
-		if (my > 0)
-		{
-			my = -1;
-		}
-
-		my -= getSpeed();
-		if (ceil(my) <= -1)
-		{
-			setCoordY(getCoordY() - 1);
-
-			my = 0;
-		}
-	}
-	else if (dir == 8)
-	{
-		//downright
-		if (mx < 0)
-		{
-			mx = 1;
-		}
-		mx += getSpeed();
-		if (floor(mx) >= 1)
-		{
-			//Beep(1440, 30);
-			setCoordX(getCoordX() + 1);
-
-			mx = 0;
-		}
-		if (my < 0)
-		{
-			my = 1;
-		}
-		my += getSpeed();
-		if (floor(my) >= 1)
-		{
-			//Beep(1440, 30);
-			setCoordY(getCoordY() + 1);
-
-			my = 0;
 		}
 	}
 }

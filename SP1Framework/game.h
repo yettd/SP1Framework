@@ -115,4 +115,8 @@ void displayCoin();
 void IframeCool();
 //boss
 void renderBOSS(int a);
+void bossCollision();
+
+void bossAttacks();
+
 #endif // _GAME_H

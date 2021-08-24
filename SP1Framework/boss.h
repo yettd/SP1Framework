@@ -11,6 +11,8 @@ private:
 	int bossDir;
 	int bossface;
 
+	int attack=0;
+
 	COORD MAPSIZE;
 
 	int moveDir;
@@ -58,13 +60,13 @@ private:
 		 {1,0,0,0,0},
 		 {1,1,0,0,0},
 		 {1,1,1,0,0},
-		 {1,1,1,1,0}},//downright
+		 {1,1,1,1,0}},//downleft
 
 		{{0,0,0,0,0},
 		 {0,0,0,0,1},
 		 {0,0,0,1,1},
 		 {0,0,1,1,1},
-		 {0,1,1,1,1}}//downleft
+		 {0,1,1,1,1}}//downright
 	};
 public:
 	boss(COORD cord);
@@ -74,10 +76,18 @@ public:
 	int getshape(int x,int y);
 	COORD getCord();
 
+	void idel();
 	void ATTACK1();
+
 
 	void getPlayer(COORD p);
 
 	bool getWall(COORD wall);
+
+	void setAttack(int style);
+	int getAttack();
+
+	int getFace();
+
 };
 
