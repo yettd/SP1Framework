@@ -1,7 +1,7 @@
 #pragma once
 #include "entity.h"
 #include "Framework/console.h"
-class boss:
+class boss :
 	public entity
 {
 private:
@@ -11,15 +11,15 @@ private:
 	int bossDir;
 	int bossface;
 
-	int attack=0;
+	int attack = 0;
 
 	COORD MAPSIZE;
 
 	int moveDir;
 
-	bool inverse=false;
+	bool inverse = false;
 
-	int shape[9][5][5]={
+	int shape[9][5][5] = {
 		{{0,0,1,0,0},
 		 {0,1,1,1,0},
 		 {1,1,1,1,1},
@@ -78,11 +78,13 @@ public:
 	int getDirXfromPlayer(int x);
 	int getDirYfromPlayer(int y);
 	void movement(int dir);
-	int getshape(int x,int y);
+	int getshape(int x, int y);
 	COORD getCord();
+
 
 	void idel();
 	void ATTACK1();
+	int Attack2(int x, int y);
 
 
 	void getPlayer(COORD p);

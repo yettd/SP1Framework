@@ -7,8 +7,8 @@ boss::boss(COORD cord)
 	bossface = 1;
 	setTag('B');
 	int face = 0;
-	setCoordX(cord.X/2);
-	setCoordY(cord.Y/4);
+	setCoordX(cord.X / 2);
+	setCoordY(cord.Y / 4);
 	MAPSIZE = cord;
 	my = 0;
 	mx = 0;
@@ -31,9 +31,38 @@ int boss::getshape(int x, int y)
 COORD boss::getCord()
 {
 	return c;
-	
-}
 
+}
+int boss::Attack2(int x, int y)
+{
+
+	//cord for most each dir
+	bossface = 8;
+	int face = 0;
+	int mostLeft = getCoordX() - 2;
+	int mostRight = getCoordX() + 2;
+	int mostUp = getCoordY() - 2;
+	int mostDown = getCoordY() + 2;
+
+	if (x == mostLeft)
+	{
+		face -= 3;
+	}
+	else if (x == mostRight)
+	{
+		face += 3;
+	}
+	if (y == mostUp)
+	{
+		face += 1;
+	}
+	else if (y == mostDown)
+	{
+		face -= 1;
+	}
+
+	return face;
+}
 void boss::idel()
 {
 	moveDir = 1;
@@ -58,7 +87,7 @@ void boss::idel()
 		if (centerY < 0)
 		{
 
-			face +=1;
+			face += 1;
 			movement(1);
 		}
 		else if (centerY > 0)
@@ -111,7 +140,7 @@ void boss::idel()
 void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 {
 	inverse = true;
-	if (getWall(MAPSIZE)==false)
+	if (getWall(MAPSIZE) == false)
 	{
 		movement(moveDir);
 
@@ -147,7 +176,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 			bossDir = 3;
 			bossface = 1;
 		}
-		else if (moveDir == 3 )
+		else if (moveDir == 3)
 		{
 			setCoordX(MAPSIZE.X - 1);
 			moveDir = 2;
@@ -156,7 +185,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 		}
 		else if (moveDir == 2)
 		{
-			setCoordY(MAPSIZE.Y-1);
+			setCoordY(MAPSIZE.Y - 1);
 			moveDir = 4;
 			bossDir = 2;
 			bossface = 0;
@@ -173,7 +202,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 }
 
 
-void boss:: getPlayer(COORD p)
+void boss::getPlayer(COORD p)
 {
 	player.X = getCoordX() - p.X;
 	player.Y = getCoordY() - p.Y;
@@ -181,7 +210,7 @@ void boss:: getPlayer(COORD p)
 
 bool boss::getWall(COORD wall)//attack 1 charge to player
 {
-	COORD SideToLook={0,0};
+	COORD SideToLook = { 0,0 };
 	if (bossDir == 0)
 	{
 		if (!inverse)
@@ -193,7 +222,7 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 		else
 		{
 			SideToLook.X = getCoordX();
-			SideToLook.Y = getCoordY()-2;
+			SideToLook.Y = getCoordY() - 2;
 			if (SideToLook.Y == 1)
 			{
 				return true;
@@ -203,7 +232,7 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 				return false;
 			}
 		}
-		
+
 	}
 	else if (bossDir == 1)
 	{
@@ -217,8 +246,8 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 		else
 		{
 			SideToLook.X = getCoordX();
-			SideToLook.Y = getCoordY()+2;
-			if (SideToLook.Y == wall.Y-1)
+			SideToLook.Y = getCoordY() + 2;
+			if (SideToLook.Y == wall.Y - 1)
 			{
 				return true;
 			}
@@ -240,7 +269,7 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 		}
 		else
 		{
-			SideToLook.X = getCoordX()-4;
+			SideToLook.X = getCoordX() - 4;
 			SideToLook.Y = getCoordY();
 			if (SideToLook.X == 1)
 			{
@@ -251,7 +280,7 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 				return false;
 			}
 		}
-		
+
 	}
 	else if (bossDir == 3)
 	{
@@ -264,9 +293,9 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 		}
 		else
 		{
-			SideToLook.X = getCoordX()+4;
+			SideToLook.X = getCoordX() + 4;
 			SideToLook.Y = getCoordY();
-			if (SideToLook.X == wall.X-1)
+			if (SideToLook.X == wall.X - 1)
 			{
 				return true;
 			}
@@ -276,37 +305,37 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 			}
 		}
 
-		
+
 	}
 	else if (bossDir == 4)
 	{
 
 		SideToLook.X = getCoordX() + 4;
-		SideToLook.Y = getCoordY()-2;
-		
+		SideToLook.Y = getCoordY() - 2;
+
 	}
 	else if (bossDir == 5)
 	{
 
 		SideToLook.X = getCoordX() - 4;
 		SideToLook.Y = getCoordY() - 2;
-		
+
 	}
 	else if (bossDir == 6)
 	{
 
 		SideToLook.X = getCoordX() - 4;
 		SideToLook.Y = getCoordY() + 2;
-		
+
 	}
 	else if (bossDir == 7)
 	{
 
 		SideToLook.X = getCoordX() + 4;
 		SideToLook.Y = getCoordY() + 2;
-		
+
 	}
-	
+
 
 	if (SideToLook.X == 1 || SideToLook.X == wall.X - 1 || SideToLook.Y == wall.Y - 1 ||
 		SideToLook.Y == 1)

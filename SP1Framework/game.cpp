@@ -33,6 +33,9 @@ int ug3lvl = 1;
 float iframeCD = 0;
 
 
+COORD Teemp = { 0,0 };
+float timer = 0;
+
 int ug1 = 5, ug2 = 5, ug3 = 5;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
@@ -418,7 +421,7 @@ void updateGame()       // gameplay logic
         }
         bossAttacks();
     }
-    currTime -= 0.01;
+    //currTime -= 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
@@ -441,7 +444,7 @@ void bossAttacks()
         if (bs->getAttack() == 1)
         {
             bs->ATTACK1();
-            int dir=0;
+            int dir = 0;
             if (bs->getFace() == 0)
             {
                 dir = 1;
@@ -461,8 +464,48 @@ void bossAttacks()
             if (bs->getm_activr())
             {
 
-            createBullet(bs->getCoordX(), bs->getCoordY(), 45, dir, 1);
+                createBullet(bs->getCoordX(), bs->getCoordY(), 45, dir, 1);
             }
+        }
+        else if (bs->getAttack() == 2)
+        {
+            COORD a = { 0,0 };
+            if (Teemp.X != bs->getCoordX() && Teemp.Y != bs->getCoordY())
+            {
+                Teemp.X = bs->getCoordX();
+                Teemp.Y = bs->getCoordY();
+                a = Teemp;
+                a.X -= Teemp.X - 2;
+                a.Y -= Teemp.Y - 2;
+            }
+            int temp2X = a.X;
+            int temp2Y = a.Y;
+
+            if (bs->Attack2(a.X, a.Y) != 0)
+            {
+                createBullet(a.X - 2, a.Y, 45, bs->Attack2(a.X, a.Y), 1);
+            }
+            /* if (timer >= 1)
+             {
+                 a.X += 1;
+                 if (a.X > bs->getCoordX() + 2)
+                 {
+                     a.X = temp2X;
+                     a.Y += 1;
+                     if (a.Y > bs->getCoordY() + 2)
+                     {
+                         a.Y = temp2Y;
+                         a.X = temp2X;
+                     }
+                 }
+                 timer = 0;
+             }
+             else
+             {
+                 timer +=0.01 ;
+             }*/
+
+
         }
         else if (bs->getAttack() == 0)
         {
@@ -472,16 +515,26 @@ void bossAttacks()
     }
     else
     {
-        if (bs->getAttack() != 0 && bs->getAttack()!=-1)
+        if (bs->getAttack() != 0 && bs->getAttack() != -1)
         {
             bs->setAttack(0);
+            bossAttackTimer = 5;
         }
         else
         {
-            bs->setAttack(1);
+            if (bs->getAttack() == -1)
+            {
+                bs->setAttack(2);
+            }
+            else
+            {
+                bs->setAttack(2);
+            }
+            bossAttackTimer = rand() % 10 + 5;
         }
-        bossAttackTimer = 5;
+
     }
+
   
 }
 
@@ -1142,7 +1195,14 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        WS = en.size();
+        if (en.size() > 1)
+        {
+            WS = ((boss*)en[1])->Attack2(39, 4);
+            if (((boss*)en[1])->Attack2(39, 4) != 0)
+            {
+                createBullet(36, 4, 45, ((boss*)en[1])->Attack2(39, 4), 1);
+            }
+        }
         ss << "Coin : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
