@@ -279,13 +279,14 @@ void IframeCool()
 }
 
 
+
 void collisionDetection()
 {
     for (int i = 0; i < en.size(); i++)
     {
         for (int j = 0; j < en.size(); j++)
         {
-            if (i != j && j<en.size())
+            if (i != j)
             {
                 if (en[i]->getCoordX() == en[j]->getCoordX() && en[i]->getCoordY() == en[j]->getCoordY())
                 {
@@ -306,6 +307,7 @@ void collisionDetection()
                                     break;
                                 }
                             }
+                            j--;
                         }
                     }
                     else if (en[i]->getTag() == 'E')
@@ -338,6 +340,8 @@ void collisionDetection()
                                 en.erase(en.begin() + j);
                                 en.erase(en.begin() + i);
                             }
+                            i--;
+                            j--;
                         }
                     }
                     
@@ -411,6 +415,7 @@ void updateGame()       // gameplay logic
         {
             en.push_back(new boss(g_Console.getConsoleSize()));
         }
+        bossAttacks();
     }
     currTime -= 0.01;
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
@@ -421,7 +426,67 @@ void updateGame()       // gameplay logic
     enShoot();
     IframeCool();
     collisionDetection();
+<<<<<<< HEAD
     //spawnEnemy();
+=======
+
+   // spawnEnemy();
+>>>>>>> ecd660aad63fc29671945dd95eafcfcfa7d92082
+}
+
+float bossAttackTimer = 5;//how long before next move
+
+void bossAttacks()
+{
+    boss* bs = ((boss*)en[1]);
+
+    if (bossAttackTimer > 0)
+    {
+        if (bs->getAttack() == 1)
+        {
+            bs->ATTACK1();
+            int dir=0;
+            if (bs->getFace() == 0)
+            {
+                dir = 1;
+            }
+            if (bs->getFace() == 1)
+            {
+                dir = -1;
+            }
+            if (bs->getFace() == 2)
+            {
+                dir = -3;
+            }
+            if (bs->getFace() == 3)
+            {
+                dir = 3;
+            }
+            if (bs->getm_activr())
+            {
+
+            createBullet(bs->getCoordX(), bs->getCoordY(), 45, dir, 1);
+            }
+        }
+        else if (bs->getAttack() == 0)
+        {
+            bs->idel();
+        }
+        bossAttackTimer -= 0.01;
+    }
+    else
+    {
+        if (bs->getAttack() != 0 && bs->getAttack()!=-1)
+        {
+            bs->setAttack(0);
+        }
+        else
+        {
+            bs->setAttack(1);
+        }
+        bossAttackTimer = 5;
+    }
+  
 }
 
 void upgradeScreenInput()
@@ -774,14 +839,14 @@ void destroyBullet(int i)
 
 void destroyEnemy(int i)
 {
-    if (e[i]->getCoordX() > g_Console.getConsoleSize().X ||
-        e[i]->getCoordY() > g_Console.getConsoleSize().Y ||
-        e[i]->getCoordX() < 0 ||
-        e[i]->getCoordY() < 0)
-    {
-        delete e[i];
-        e.erase(e.begin() + i);
-    }
+    //if (e[i]->getCoordX() > g_Console.getConsoleSize().X ||
+    //    e[i]->getCoordY() > g_Console.getConsoleSize().Y ||
+    //    e[i]->getCoordX() < 0 ||
+    //    e[i]->getCoordY() < 0)
+    //{
+    //    delete e[i];
+    //    e.erase(e.begin() + i);
+    //}
     // Collision?
 }
 
@@ -977,7 +1042,6 @@ void renderBOSS(int a)
         temp.X =temp2;
         temp.Y += 1;
     }
-    b->ATTACK1();
 }
 
 void renderCharacter()
@@ -1082,7 +1146,7 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        
+        WS = en.size();
         ss << "Coin : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
