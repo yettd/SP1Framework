@@ -34,6 +34,7 @@ float iframeCD = 0;
 
 
 COORD Teemp = { 0,0 };
+COORD a = { 0,0 };
 float timer = 0;
 
 int ug1 = 5, ug2 = 5, ug3 = 5;
@@ -469,14 +470,13 @@ void bossAttacks()
         }
         else if (bs->getAttack() == 2)
         {
-            COORD a = { 0,0 };
-            if (Teemp.X != bs->getCoordX() && Teemp.Y != bs->getCoordY())
+            
+            if (Teemp.X != bs->getCoordX()-2 && Teemp.Y != bs->getCoordY())
             {
                 Teemp.X = bs->getCoordX();
                 Teemp.Y = bs->getCoordY();
-                a = Teemp;
-                a.X -= Teemp.X - 2;
-                a.Y -= Teemp.Y - 2;
+                a.X = Teemp.X - 2;
+                a.Y = Teemp.Y - 2;
             }
             int temp2X = a.X;
             int temp2Y = a.Y;
@@ -485,7 +485,7 @@ void bossAttacks()
             {
                 createBullet(a.X - 2, a.Y, 45, bs->Attack2(a.X, a.Y), 1);
             }
-            /* if (timer >= 1)
+             if (timer >= 1)
              {
                  a.X += 1;
                  if (a.X > bs->getCoordX() + 2)
@@ -503,7 +503,7 @@ void bossAttacks()
              else
              {
                  timer +=0.01 ;
-             }*/
+             }
 
 
         }
@@ -530,7 +530,7 @@ void bossAttacks()
             {
                 bs->setAttack(2);
             }
-            bossAttackTimer = rand() % 10 + 5;
+            bossAttackTimer = 100;
         }
 
     }
@@ -1195,14 +1195,7 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        if (en.size() > 1)
-        {
-            WS = ((boss*)en[1])->Attack2(39, 4);
-            if (((boss*)en[1])->Attack2(39, 4) != 0)
-            {
-                createBullet(36, 4, 45, ((boss*)en[1])->Attack2(39, 4), 1);
-            }
-        }
+        WS = a.X;
         ss << "Coin : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
