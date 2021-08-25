@@ -259,19 +259,35 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
 
-void displayScored()
+void displayStats()
 {
     COORD c;
     c.X = 0;
     c.Y = 0;
     std::string s;
     std::ostringstream ss;
-    int WS= floor(currTime);
+
+    int WS = floor(currTime);
+    if (wave == 10)
+    {
+        if (en.size() > 1)
+        {
+            WS = ((boss*)en[1])->gethp();
+        }
+    }
     int hp = ((Player*)en[0])->getHp();
-    ss <<"TIME : "<< std::to_string(WS)<<"  HP:"<< std::to_string(hp);
+    if (wave != 10)
+    {
+        ss << "TIME : " << std::to_string(WS) << "  HP:" << std::to_string(hp);
+    }
+    else
+    {
+        ss << "BOSS HP : " << std::to_string(WS) << "  HP:" << std::to_string(hp);
+    }
 
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
+
 
 void IframeCool()
 {
@@ -387,7 +403,7 @@ void collisionDetection()
 
                             delete en[j];
                             delete en[i];
-
+                            current--;
                             if (j < i)
                             {
                                 en.erase(en.begin() + i);
@@ -876,19 +892,11 @@ void updateMaxenemy()
 {
     if (wave == 1)
     {
-        maxenemy = 1;
-    }
-    else if (wave < 4)
-    {
-        maxenemy = wave;
-    }
-    else if (wave < 10)
-    {
-        maxenemy = ceil(wave + 2);
+        maxenemy = 3;
     }
     else
     {
-        maxenemy = ceil(wave + 5);
+        maxenemy++;
     }
 }
 
@@ -896,10 +904,11 @@ void spawnEnemy()
 {
     if (spawnRate >= spawnCounter)
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = current; i < maxenemy; i++)
         {
-        en.push_back(new enemy);
-        spawnRate = 0;
+            en.push_back(new enemy);
+            spawnRate = 0;
+            current++;
         }
     }
     else
@@ -1014,7 +1023,7 @@ void renderGame()
     //renderCharacter();  // renders the character into the buffer
     //renderBullet();
     //renderEnemy();      // renders enemies
-    displayScored();
+    displayStats();
     displayWave();
     displayCoin();
 }
