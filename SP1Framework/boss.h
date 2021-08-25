@@ -94,6 +94,9 @@ public:
 	void setAttack(int style);
 	int getAttack();
 
+	int gethp();
+	void sethp(int h);
+
 	int getFace();
 
 };

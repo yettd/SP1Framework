@@ -3,7 +3,7 @@
 Player::Player()
 {
 	setSym(0);
-	setCoin(100);
+	setCoin(0);
 	setCoordX(0);
 	setCoordY(0);
 	SetFireRate(1);

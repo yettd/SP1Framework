@@ -2,7 +2,7 @@
 
 boss::boss(COORD cord)
 {
-	hp = 10;
+	hp = 20;
 	bossDir = 0;
 	bossface = 1;
 	setTag('B');
@@ -146,7 +146,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 
 		if (moveDir == 1 || moveDir == 2)
 		{
-			if (getCoordY() % 3 == 0)
+			if (getCoordY() % 2 == 0)
 			{
 				setm_bActive(true);
 			}
@@ -157,7 +157,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 		}
 		else if (moveDir == 3 || moveDir == 4)
 		{
-			if (getCoordX() % 5 == 0)
+			if (getCoordX() % 4 == 0)
 			{
 				setm_bActive(true);
 			}
@@ -354,6 +354,14 @@ void boss::setAttack(int style)
 int boss::getAttack()
 {
 	return attack;
+}
+int boss::gethp()
+{
+	return hp;
+}
+void boss::sethp(int h)
+{
+	hp = h;
 }
 int boss::getFace()
 {

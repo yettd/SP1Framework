@@ -22,7 +22,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime =10 ;
 float currTime = 0;
-int wave = 1;
+int wave = 10;
 int maxenemy = 0;
 int current = 0;
 //level for each upgrade
@@ -285,8 +285,64 @@ void IframeCool()
         iframeCD += 0.01;
     }
 }
+void bossCollision()
+{
+    boss* bs = ((boss*)en[1]);
+    COORD temp;
 
+    temp.X = bs->getCoordX();
+    temp.Y = bs->getCoordY();
+    temp.X -= 4;
+    temp.Y -= 2;
+    int temp2y = temp.Y;
+    int temp2x = temp.X;
+    
+    for (int i = 0; i < en.size(); i++)
+    {
+        if (i != 1)//not checking with boss
+        {
+            for (int k = 0; k < 5; k++)
+            {
+                for (int j = 0; j < 5; j++)
+                {
+                    if (bs->getshape(j, k) == 1)
+                    {
+                        if ((en[i]->getCoordX() == temp.X || en[i]->getCoordX() == temp.X + 1) && en[i]->getCoordY() == temp.Y)
+                        {
+                            if (en[i]->getTag() == 43)
+                            {
+                                delete en[i];
+                                en.erase(en.begin() + i);
+                                bs->sethp(bs->gethp() - 1);
+                                i--;
+                            }
+                            else if (en[i]->getTag() == 'P')
+                            {
+                                if (((Player*)en[i])->getiframe())
+                                {
+                                    ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
+                                    ((Player*)en[i])->setiframe(false);
+                                }
+                            }
+                        }
+                    }
+                    temp.X += 2;
+                }
+                temp.X = temp2x;
+                temp.Y += 1;
+            }
+            
+        }
+        temp.Y = temp2y;
+    }
 
+    //checkhp
+    if (bs->gethp() <= 0)
+    {
+        wave++;
+    }
+    //gamewin
+}
 
 void collisionDetection()
 {
@@ -308,12 +364,6 @@ void collisionDetection()
                             {
                                 ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
                                 ((Player*)en[i])->setiframe(false);
-                                if (((Player*)en[0])->getHp() <= 0)
-                                {
-                                    en.clear();
-                                    g_eGameState = S_LOSE;
-                                    break;
-                                }
                             }
                             j--;
                         }
@@ -425,8 +475,12 @@ void updateGame()       // gameplay logic
             currTime = 30;
         }
         bossAttacks();
+       
     }
-    currTime -= 0.01;
+    if (wave < 10)
+    {
+        currTime -= 0.01;
+    }
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
@@ -435,11 +489,18 @@ void updateGame()       // gameplay logic
     enShoot();
     IframeCool();
     collisionDetection();
+    if (wave == 10)
+    {
+        bossCollision();
+    }
+    checkLose();
+
+
     //spawnEnemy();
 }
 
 float bossAttackTimer = 5;//how long before next move
-
+int temp;
 void bossAttacks()
 {
     boss* bs = ((boss*)en[1]);
@@ -479,34 +540,46 @@ void bossAttacks()
             {
                 Teemp.X = bs->getCoordX();
                 Teemp.Y = bs->getCoordY();
-                a.X = Teemp.X - 2;
-                a.Y = Teemp.Y - 2;
+                a.X = Teemp.X-2;
+                a.Y = Teemp.Y-2;
+                temp = a.X-2;
             }
-            int temp2X = a.X;
-            int temp2Y = a.Y;
-
-            if (bs->Attack2(a.X, a.Y) != 0)
+            int face = bs->Attack2(a.X , a.Y);
+            if (face != 0)
             {
-                createBullet(a.X - 2, a.Y, 45, bs->Attack2(a.X, a.Y), 1);
+                createBullet(temp, a.Y, 45, face, 1);
             }
              if (timer >= 1)
              {
-                 a.X += 1;
-                 if (a.X > bs->getCoordX() + 2)
+                 if (a.X < Teemp.X + 2 &&
+                     a.Y == Teemp.Y - 2)
                  {
-                     a.X = temp2X;
-                     a.Y += 1;
-                     if (a.Y > bs->getCoordY() + 2)
-                     {
-                         a.Y = temp2Y;
-                         a.X = temp2X;
-                     }
+                     a.X += 1;
+                     temp += 2;
                  }
+                 else if (a.X == Teemp.X + 2 &&
+                     a.Y < Teemp.Y + 2)
+                 {
+                     a.Y += 1;
+                 }
+                 else if (a.X > Teemp.X - 2 &&
+                     a.Y == Teemp.Y + 2)
+                 {
+                     a.X -= 1;
+                     temp -= 2;
+                 }
+                 else if (a.X == Teemp.X - 2 &&
+                     a.Y > Teemp.Y - 2)
+                 {
+                     a.Y -= 1;
+                 }
+
+            
                  timer = 0;
              }
              else
              {
-                 timer +=0.01 ;
+                 timer +=0.05 ;
              }
 
 
@@ -528,13 +601,13 @@ void bossAttacks()
         {
             if (bs->getAttack() == -1)
             {
-                bs->setAttack(2);
+                bs->setAttack(1);
             }
             else
             {
-                bs->setAttack(2);
+                bs->setAttack(rand()%2+1);
             }
-            bossAttackTimer = 100;
+            bossAttackTimer = rand()%10+5;
         }
 
     }
@@ -978,6 +1051,14 @@ void renderUpgradeScreen()
         g_eGameState = S_WIN;
     }
 }
+void checkLose()
+{
+    if (((Player*)en[0])->getHp() <= 0)
+    {
+        en.clear();
+        g_eGameState = S_LOSE;
+    }
+}
 
 void renderLoseScreen()
 {
@@ -1053,7 +1134,7 @@ void renderEntity()
             }
             else if (en[i]->getTag() == 43)
             {
-                charColor = 0x17;
+                charColor = 0x07;
             }
             else
             {
@@ -1199,7 +1280,6 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        WS = a.X;
         ss << "Coin : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }

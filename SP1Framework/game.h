@@ -116,6 +116,7 @@ void enShoot();
 
 void displayCoin();
 void IframeCool();
+void checkLose();
 //boss
 void renderBOSS(int a);
 void bossCollision();
