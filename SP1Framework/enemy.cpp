@@ -89,38 +89,36 @@ void enemy::setCoord()
 	if (randomNumber == 1)
 	{
 		setRandX();
-		setCoordY(1);
+		setCoordY(2);
 	}
 	//Bottom Wall
 	else if (randomNumber == 2)
 	{
 		setRandX();
-		setCoordY(24);
+		setCoordY(23);
 	}
 	else if (randomNumber == 3)
 	{
 		setRandY();
-		setCoordX(1);
+		setCoordX(2);
 	}
 	else if (randomNumber == 4)
 	{
 		setRandY();
-		setCoordX(79);
+		setCoordX(77);
 	}
-
-
 }
 void enemy::setRandX()
 {
 	int randomNumber;
-	randomNumber = (rand() % 79) + 1;
+	randomNumber = (rand() % 78) + 2;
 	setCoordX(randomNumber);
 }
 
 void enemy::setRandY()
 {
 	int randomNumber;
-	randomNumber = (rand() % 24) + 1;
+	randomNumber = (rand() % 23) + 2;
 	setCoordY(randomNumber);
 }
 
@@ -151,7 +149,7 @@ void enemy::AggresiveAI(int x, int y,int cx,int cy)
 		{
 			movement(2);
 		}
-		if (getCoordX() <= 0 || getCoordX() >= cx || getCoordY() <= 1 || getCoordY() >= cy)
+		if (getCoordX() <= 3 || getCoordX() >= cx-1 || getCoordY() <= 2 || getCoordY() >= cy-1)
 		{
 			wall = true;
 		}
@@ -169,96 +167,56 @@ void enemy::AggresiveAI(int x, int y,int cx,int cy)
 void enemy::SmartAI(int cx, int cy)
 {
 	setSym('S');
-	if (wall == false)
-	{
-		//get closest wall
-		//get centerpoint for both
-		float halfCX = cx / 2;
-		float halfCY = cy / 2;
-		if (dx == 0 && dy == 0)
-		{
-			dy = halfCY - getCoordY();
-			dx = halfCX - getCoordX();
-		}
 
-		if (fabs(dy) > fabs(dx))
+	if (getCoordX() == 2)
+	{
+		//most left
+		if (LR == 1)
 		{
-			if (dx < halfCX)
-			{
-				movement(3);
-			}
-			else
-			{
-				movement(4);
-			}
+			movement(1);
 		}
 		else
 		{
-			if (dy < halfCY)
-			{
-				movement(1);
-			}
-			else
-			{
-				movement(2);
-			}
-		}
-		if (getCoordX() <= 0 || getCoordX() >= cx || getCoordY() >= cy || getCoordY() <= 1)
-		{
-			wall = true;
+			movement(2);
 		}
 	}
-	else
+	else if (getCoordX() == cx)
 	{
-		if (getCoordX() == 0 )
+		//most right
+		if (LR == 1)
 		{
-			//most left
-			if (LR == 1)
-			{
-				movement(1);
-			}
-			else
-			{
-				movement(2);
-			}
+			movement(2);
 		}
-		else if (getCoordX() == cx)
+		else
 		{
-			//most right
-			if (LR == 1)
-			{
-				movement(2);
-			}
-			else
-			{
-				movement(1);
-			}
-		}
-		if (getCoordY() == 1)
-		{
-			//most up
-			if (LR == 1)
-			{
-				movement(4);
-			}
-			else
-			{
-				movement(3);
-			}
-		}
-		else if (getCoordY() == cy)
-		{
-			//most down
-			if (LR == 1)
-			{
-				movement(3);
-			}
-			else
-			{
-				movement(4);
-			}
+			movement(1);
 		}
 	}
+	if (getCoordY() == 2)
+	{
+		//most up
+		if (LR == 1)
+		{
+			movement(4);
+		}
+		else
+		{
+			movement(3);
+		}
+	}
+	else if (getCoordY() == cy)
+	{
+		//most down
+		if (LR == 1)
+		{
+			movement(3);
+		}
+		else
+		{
+			movement(4);
+		}
+	}
+
 }
 
 void enemy::DumbAI(int x, int y)

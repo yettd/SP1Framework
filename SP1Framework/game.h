@@ -90,7 +90,6 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent);   // handles keyb
 void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mouse events for gameplay 
 
 void displayStats();
-void updateScord(int s);
 void displayHP();
 void renderBullet();
 void moveBullet();
@@ -101,8 +100,7 @@ void rechargeFire();
 
 void renderEnemy();
 void spawnEnemy();
-void clearEnemy();
-void destroyEnemy(int i);
+void clearEnemy(int a);
 void moveEnemy();
 void updateMaxenemy();
 
@@ -122,5 +120,9 @@ void renderBOSS(int a);
 void bossCollision();
 
 void bossAttacks();
+
+//map
+void createStar();
+void renderStar();
 
 #endif // _GAME_H

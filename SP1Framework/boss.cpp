@@ -146,7 +146,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 
 		if (moveDir == 1 || moveDir == 2)
 		{
-			if (getCoordY() % 2 == 0)
+			if (getCoordY() % 3 == 0)
 			{
 				setm_bActive(true);
 			}
@@ -157,7 +157,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 		}
 		else if (moveDir == 3 || moveDir == 4)
 		{
-			if (getCoordX() % 4 == 0)
+			if (getCoordX() % 5 == 0)
 			{
 				setm_bActive(true);
 			}
@@ -171,28 +171,28 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 	{
 		if (moveDir == 1)
 		{
-			setCoordY(1);
+			setCoordY(2);
 			moveDir = 3;
 			bossDir = 3;
 			bossface = 1;
 		}
 		else if (moveDir == 3)
 		{
-			setCoordX(MAPSIZE.X - 1);
+			setCoordX(MAPSIZE.X - 4);
 			moveDir = 2;
 			bossDir = 1;
 			bossface = 2;
 		}
 		else if (moveDir == 2)
 		{
-			setCoordY(MAPSIZE.Y - 1);
+			setCoordY(MAPSIZE.Y - 2);
 			moveDir = 4;
 			bossDir = 2;
 			bossface = 0;
 		}
 		else if (moveDir == 4)
 		{
-			setCoordX(1);
+			setCoordX(3);
 			moveDir = 1;
 			bossDir = 0;
 			bossface = 3;
@@ -236,7 +236,6 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 	}
 	else if (bossDir == 1)
 	{
-
 		if (!inverse)
 		{
 			bossface = 1;
@@ -256,8 +255,6 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 				return false;
 			}
 		}
-
-
 	}
 	else if (bossDir == 2)
 	{
@@ -337,8 +334,8 @@ bool boss::getWall(COORD wall)//attack 1 charge to player
 	}
 
 
-	if (SideToLook.X == 1 || SideToLook.X == wall.X - 1 || SideToLook.Y == wall.Y - 1 ||
-		SideToLook.Y == 1)
+	if (SideToLook.X == 4 || SideToLook.X == wall.X - 4 || SideToLook.Y == wall.Y - 2 ||
+		SideToLook.Y == 2)
 	{
 		return true;
 	}

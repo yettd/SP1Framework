@@ -12,6 +12,7 @@
 #include "bullet.h"
 #include "enemy.h"
 #include "boss.h"
+#include "star.h"
 float spawnCounter = 2;
 float spawnRate = spawnCounter;
 int face = 1;
@@ -22,8 +23,8 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime =10 ;
 float currTime = 0;
-int wave = 10;
-int maxenemy = 0;
+int wave = 1;
+int maxenemy = 3;
 int current = 0;
 //level for each upgrade
 int ug1lvl = 1;
@@ -41,8 +42,10 @@ int ug1 = 5, ug2 = 5, ug3 = 5;
 SKeyEvent g_skKeyEvent[K_COUNT];
 SMouseEvent g_mouseEvent;
 
-std::vector<bullet*> b;
-std::vector<enemy*> e;
+float spawnStar = 2.5;
+std::vector<star*> stars;
+
+
 std::vector<entity*> en;
 std::ostringstream error;
 // Game specific variables here
@@ -353,10 +356,14 @@ void collisionDetection()
                                 ((Player*)en[i])->setiframe(false);
                             }
                             j--;
+                            if (en[j]->getTag() == 'E')
+                            {
+                                current--;
+                            }
                         }
                     }
                     else if (en[i]->getTag() == 'E')
-                    {
+                    {             
                         if (en[j]->getTag() == 43)
                         {
                             if (((enemy*)en[i])->getAI() == 0)
@@ -468,6 +475,7 @@ void updateGame()       // gameplay logic
     {
         currTime -= 0.01;
     }
+    createStar();
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
     rechargeFire();          // sound can be played here too.
@@ -610,6 +618,8 @@ void upgradeScreenInput()
     {
         if (((Player*)en[0])->getcoin() >= ug1)
         {
+
+            error.str("");
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug1);
             float fireRate = en[0]->getFireRate();
             fireRate -= 0.1;
@@ -630,6 +640,8 @@ void upgradeScreenInput()
     {
         if (((Player*)en[0])->getcoin() >= ug2)
         {
+
+            error.str("");
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug2);
             float speed = en[0]->getSpeed();
             speed += 0.05;
@@ -650,6 +662,8 @@ void upgradeScreenInput()
     {
         if (((Player*)en[0])->getcoin() >= ug3)
         {
+
+            error.str("");
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug3);
             ((Player*)en[0])->setmHp(((Player*)en[0])->getmHp() + 1);
             ug3 += 5;
@@ -675,7 +689,7 @@ void upgradeScreenInput()
         g_eGameState = S_GAME;
         updateWave();
         ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
-        clearEnemy();
+        clearEnemy(1);
         updateMaxenemy();
         current = 0;
         error.str("");
@@ -684,10 +698,43 @@ void upgradeScreenInput()
     
 }
 
+void createStar()
+{
+    if (spawnStar == 0)
+    {
+        for (int i = 0; i < rand()%6; i++)
+        {
+
+            stars.push_back(new star(80, rand() % 76 + 2));
+        }
+    }
+    else
+    {
+        spawnStar -= 0.50;
+    }
+}
+void renderStar()
+{
+    for (int i = 0; i < stars.size(); i++)
+    {
+            WORD charColor = 0x07;
+            COORD temp;
+            temp.X = stars[i]->getCoordX();
+            temp.Y = stars[i]->getCoordY();
+            g_Console.writeToBuffer(temp, stars[i]->getSym(), charColor);
+            stars[i]->movement(0);
+            if (stars[i]->getCoordX() < 2)
+            {
+                delete stars[i];
+                stars.erase(stars.begin() + i);
+            }
+    }
+}
 void loseScreenInput()
 {
     if (g_skKeyEvent[K_SPACE].keyDown)
     {
+        clearEnemy(0);
         en.clear();
         wave = 1;
         currTime = defTime;
@@ -698,7 +745,6 @@ void loseScreenInput()
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         en[0]->setm_bActive(true);
         g_eGameState = S_GAME;
-        clearEnemy();
         spawnCounter = 2;
         updateMaxenemy();
         current = 0;
@@ -730,7 +776,7 @@ void winScreenInput()
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         en[0]->setm_bActive(true);
         g_eGameState = S_GAME;
-        clearEnemy();
+        clearEnemy(0);
         spawnCounter = 2;
         updateMaxenemy();
         current = 0;
@@ -752,22 +798,22 @@ void moveCharacter()
 {    
     // Updating the location of the character based on the key release
     // providing a beep sound whenver we shift the character
-    if (g_skKeyEvent[K_UP].keyDown && en[0]->getCoordY() > 1)
+    if (g_skKeyEvent[K_UP].keyDown && en[0]->getCoordY() > 2)
     {
         face += 1;
         en[0]->movement(1);
     }
-    else if (g_skKeyEvent[K_DOWN].keyDown && en[0]->getCoordY() < g_Console.getConsoleSize().Y - 1)
+    else if (g_skKeyEvent[K_DOWN].keyDown && en[0]->getCoordY() < g_Console.getConsoleSize().Y - 2)
     {
         face -= 1;
         en[0]->movement(2);
     }
-    if (g_skKeyEvent[K_LEFT].keyDown && en[0]->getCoordX() > 0)
+    if (g_skKeyEvent[K_LEFT].keyDown && en[0]->getCoordX() > 3)
     {
         face -= 3;
         en[0]->movement(3);
     }
-    else if (g_skKeyEvent[K_RIGHT].keyDown && en[0]->getCoordX() < g_Console.getConsoleSize().X - 1)
+    else if (g_skKeyEvent[K_RIGHT].keyDown && en[0]->getCoordX() < g_Console.getConsoleSize().X - 3)
     {
         face += 3;
         en[0]->movement(4);
@@ -817,11 +863,11 @@ void enShoot()
 void createBullet(int x,int y,char t,int dir, int i)
 {
     en.push_back(new bullet(x, y, dir,t));
-    PlaySound(NULL, NULL, 0);
+   /* PlaySound(NULL, NULL, 0);
     if (i == 3) PlaySound(TEXT("playerLaserSFX.wav"), NULL, SND_ASYNC);
     else if (i == 1) PlaySound(TEXT("pewSFX.wav"), NULL, SND_ASYNC);
     else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
-    else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);
+    else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);*/
 }
 
 void moveEnemy()
@@ -837,11 +883,11 @@ void moveEnemy()
             }
             else if (e->getAI() == 1)
             {
-                e->AggresiveAI(en[0]->getCoordX(), en[0]->getCoordY(), g_Console.getConsoleSize().X-1, g_Console.getConsoleSize().Y-1);
+                e->AggresiveAI(en[0]->getCoordX(), en[0]->getCoordY(), g_Console.getConsoleSize().X-4, g_Console.getConsoleSize().Y-1);
             }
             else if (e->getAI() == 2) 
             {
-                e->SmartAI(g_Console.getConsoleSize().X-1, g_Console.getConsoleSize().Y-1);
+                e->SmartAI(g_Console.getConsoleSize().X-3, g_Console.getConsoleSize().Y-2);
             }
         }
     }
@@ -889,9 +935,13 @@ void spawnEnemy()
     }
 }
 
-void clearEnemy()
+void clearEnemy(int a)
 {
-    en.erase(en.begin() + 1,en.end());
+    for (int i = a; i < en.size(); i++)
+    {
+        delete en[i];
+    }
+    en.erase(en.begin() + a,en.end());
 }
 // Include enemy behaviour
 
@@ -938,28 +988,17 @@ void render()
 
 void destroyBullet(int i)
 {
-    if (en[i]->getCoordX() > g_Console.getConsoleSize().X ||
-        en[i]->getCoordY() > g_Console.getConsoleSize().Y ||
-        en[i]->getCoordX() < 0 ||
-        en[i]->getCoordY() < 0)
+    if (en[i]->getCoordX() > g_Console.getConsoleSize().X-3 ||
+        en[i]->getCoordY() > g_Console.getConsoleSize().Y-2 ||
+        en[i]->getCoordX() < 3 ||
+        en[i]->getCoordY() < 2)
     {
         delete en[i];
         en.erase(en.begin() + i);
     }
 }
 
-void destroyEnemy(int i)
-{
-    //if (e[i]->getCoordX() > g_Console.getConsoleSize().X ||
-    //    e[i]->getCoordY() > g_Console.getConsoleSize().Y ||
-    //    e[i]->getCoordX() < 0 ||
-    //    e[i]->getCoordY() < 0)
-    //{
-    //    delete e[i];
-    //    e.erase(e.begin() + i);
-    //}
-    // Collision?
-}
+
 
 void clearScreen()
 {
@@ -990,15 +1029,13 @@ void renderSplashScreen()  // renders the splash screen
 
 void renderGame()
 {
-    renderMap();        // renders the map to the buffer first
+    renderStar();
     renderEntity();
-    //renderCharacter();  // renders the character into the buffer
-    //renderBullet();
-    //renderEnemy();      // renders enemies
     displayStats();
     displayHP();
     displayWave();
     displayCoin();
+    renderMap();        // renders the map to the buffer first
 }
 
 void renderUpgradeScreen()
@@ -1149,7 +1186,7 @@ void renderEntity()
             }
             else if (en[i]->getTag() == 43)
             {
-                charColor = 0x07;
+                charColor = 0x06;
             }
             else
             {
@@ -1201,28 +1238,6 @@ void renderCharacter()
     temp.X = en[0]->getCoordX();
     temp.Y = en[0]->getCoordY();
     g_Console.writeToBuffer(temp, en[0]->getSym(), 0x17);
-}
-
-void renderBullet()
-{
-    for (int i = 0; i < b.size(); i++)
-    {
-        COORD temp;
-        temp.X = b[i]->getCoordX();
-        temp.Y = b[i]->getCoordY();
-        g_Console.writeToBuffer(temp, b[i]->getSym(), 0x17);
-    }
-}
-
-void renderEnemy()
-{
-    for (int i = 0; i < e.size(); i++)
-    {
-        COORD temp;
-        temp.X = e[i]->getCoordX();
-        temp.Y = e[i]->getCoordY();
-        g_Console.writeToBuffer(temp, e[i]->getSym(), 0x17);
-    }
 }
 
 void renderFramerate()
@@ -1335,6 +1350,10 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
+        if (stars.size() > 1)
+        {
+            WS = stars[0]->getCoordX();
+        }
         ss << "COIN : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
