@@ -91,7 +91,7 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent); // handles mous
 
 void displayStats();
 void updateScord(int s);
-
+void displayHP();
 void renderBullet();
 void moveBullet();
 void createBullet(int x, int y, char t, int dir, int i);

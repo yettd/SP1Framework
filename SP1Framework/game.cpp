@@ -259,36 +259,6 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
     g_mouseEvent.eventFlags = mouseEvent.dwEventFlags;
 }
 
-void displayStats()
-{
-    COORD c;
-    c.X = 0;
-    c.Y = 0;
-    std::string s;
-    std::ostringstream ss;
-
-    int WS = floor(currTime);
-    if (wave == 10)
-    {
-        if (en.size() > 1)
-        {
-            WS = ((boss*)en[1])->gethp();
-        }
-    }
-    int hp = ((Player*)en[0])->getHp();
-    if (wave != 10)
-    {
-        ss << "TIME : " << std::to_string(WS) << "  HP:" << std::to_string(hp);
-    }
-    else
-    {
-        ss << "BOSS HP : " << std::to_string(WS) << "  HP:" << std::to_string(hp);
-    }
-
-    g_Console.writeToBuffer(c, ss.str(), 0x17);
-}
-
-
 void IframeCool()
 {
     if (iframeCD >= 1 && ((Player*)en[0])->getiframe()==false)
@@ -301,6 +271,7 @@ void IframeCool()
         iframeCD += 0.01;
     }
 }
+
 void bossCollision()
 {
     boss* bs = ((boss*)en[1]);
@@ -852,6 +823,7 @@ void createBullet(int x,int y,char t,int dir, int i)
     else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
     else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);
 }
+
 void moveEnemy()
 {
     for (int i = 0; i < en.size(); i++)
@@ -957,13 +929,13 @@ void render()
         displayError();
         break;
     }
-    
-
+   
     renderFramerate();      // renders debug information, frame rate, elapsed time, etc
     //renderInputEvents();    // renders status of input events
     renderToScreen();       // dump the contents of the buffer to the screen, one frame worth of game
     
 }
+
 void destroyBullet(int i)
 {
     if (en[i]->getCoordX() > g_Console.getConsoleSize().X ||
@@ -1006,13 +978,13 @@ void renderSplashScreen()  // renders the splash screen
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
     c.Y +=  2;
-    c.X = c.X / 2 - 7;
+    c.X = c.X / 2 - 6;
     g_Console.writeToBuffer(c, "BATTLESHIP", 0x03);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 8;
+    c.X = g_Console.getConsoleSize().X / 2 - 7;
     g_Console.writeToBuffer(c, "WASD TO MOVE", 0x09);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 10;
+    c.X = g_Console.getConsoleSize().X / 2 - 9;
     g_Console.writeToBuffer(c, "SPACEBAR TO FIRE", 0x09);
 }
 
@@ -1024,6 +996,7 @@ void renderGame()
     //renderBullet();
     //renderEnemy();      // renders enemies
     displayStats();
+    displayHP();
     displayWave();
     displayCoin();
 }
@@ -1035,28 +1008,28 @@ void renderUpgradeScreen()
         std::ostringstream ss;
         COORD c = g_Console.getConsoleSize();
         c.Y /= 3;
-        c.X = c.X / 2 - 9;
+        c.X = c.X / 2 - 8;
         ss << "Select Upgrade";
         g_Console.writeToBuffer(c, ss.str(), 0x03);
         ss.str("");
         ss << "1. Increase Fire Rate [Lv." << ug1lvl << "]( " << ug1 << " coin )";
         c.Y += 1;
-        c.X = g_Console.getConsoleSize().X / 2 - 18;
+        c.X = g_Console.getConsoleSize().X / 2 - 19;
         g_Console.writeToBuffer(c, ss.str(), 0x09);
         c.Y += 1;
         ss.str("");
         ss << "2. Increase Movement Speed [Lv." << ug2lvl << "]( " << ug2 << " coin )";
-        c.X = g_Console.getConsoleSize().X / 2 - 20;
+        c.X = g_Console.getConsoleSize().X / 2 - 21;
         g_Console.writeToBuffer(c, ss.str(), 0x09);
         c.Y += 1;
         ss.str("");
         ss << "3. Increase Max health [Lv." << ug3lvl << "]( " << ug3 << " coin )";
-        c.X = g_Console.getConsoleSize().X / 2 - 18;
+        c.X = g_Console.getConsoleSize().X / 2 - 19;
         g_Console.writeToBuffer(c, ss.str(), 0x09);
         c.Y += 1;
         ss.str("");
         ss << "4. Continue to next wave";
-        c.X = g_Console.getConsoleSize().X / 2 - 6;
+        c.X = g_Console.getConsoleSize().X / 2 - 13;
         g_Console.writeToBuffer(c, ss.str(), 0x09);
     }
     else
@@ -1077,16 +1050,16 @@ void renderLoseScreen()
 {
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
-    c.X = c.X / 2 - 9;
+    c.X = c.X / 2 - 4;
     g_Console.writeToBuffer(c, "YOU LOSE", 0x03);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 5;
     g_Console.writeToBuffer(c, "SCORE: ", 0x09);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 13;
     g_Console.writeToBuffer(c, "PRESS SPACE TO PLAY AGAIN", 0x09);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 10;
     g_Console.writeToBuffer(c, "PRESS ESCAPE TO QUIT", 0x09);
 }
 
@@ -1094,35 +1067,64 @@ void renderWinScreen()
 {
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
-    c.X = c.X / 2 - 9;
+    c.X = c.X / 2 - 4;
     g_Console.writeToBuffer(c, "YOU WIN", 0x03);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 5;
     g_Console.writeToBuffer(c, "SCORE: ", 0x09);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 13;
     g_Console.writeToBuffer(c, "PRESS SPACE TO PLAY AGAIN", 0x09);
     c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
+    c.X = g_Console.getConsoleSize().X / 2 - 10;
     g_Console.writeToBuffer(c, "PRESS ESCAPE TO QUIT", 0x09);
 }
 
 void renderMap()
 {
-    //// Set up sample colours, and output shadings
-    //const WORD colors[] = {
-    //    0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-    //    0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    //};
+    // Set up sample colours, and output shadings
+    const WORD colors[] = {
+        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+    };
 
-    //COORD c;
-    //for (int i = 0; i < 12; ++i)
-    //{
-    //    c.X = 5 * i;
-    //    c.Y = i + 1;
-    //    colour(colors[i]);
-    //    g_Console.writeToBuffer(c, " °±²Û", colors[i]);
-    //}
+    COORD c;
+    int maxX = g_Console.getConsoleSize().X;
+    int maxY = g_Console.getConsoleSize().Y;
+    c.X = 0;
+    c.Y = 1;
+    while (c.Y <= maxY)
+    {
+        while (c.X < maxX)
+        {
+            if (c.Y == 1)
+            {
+                colour(colors[11]);
+                g_Console.writeToBuffer(c, "  ", colors[11]);
+            }
+            else if (c.Y == maxY - 1)
+            {
+                colour(colors[11]);
+                g_Console.writeToBuffer(c, "  ", colors[11]);
+            }
+            else
+            {
+                if (c.X == 0)
+                {
+                    colour(colors[11]);
+                    g_Console.writeToBuffer(c, "  ", colors[11]);
+                }
+                else if (c.X == maxX - 2)
+                {
+                    colour(colors[11]);
+                    g_Console.writeToBuffer(c, "  ", colors[11]);
+                }
+            }
+            c.X += 1;
+        }
+        c.X = 0;
+        c.Y += 1;
+    }
 }
 
 void renderEntity()
@@ -1283,17 +1285,57 @@ void renderInputEvents()
     
 }
 
+void displayStats()
+{
+    COORD c;
+    c.X = g_Console.getConsoleSize().X / 2 - 6;
+    c.Y = 0;
+    std::string s;
+    std::ostringstream ss;
+
+    int WS = floor(currTime);
+    if (wave == 10)
+    {
+        if (en.size() > 1)
+        {
+            WS = ((boss*)en[1])->gethp();
+        }
+    }
+    //int hp = ((Player*)en[0])->getHp();
+    if (wave != 10)
+    {
+        ss << "TIME : " << std::to_string(WS);
+    }
+    else
+    {
+        ss << "BOSS HP : " << std::to_string(WS);
+    }
+    g_Console.writeToBuffer(c, ss.str(), 0x17);
+}
+
+void displayHP()
+{
+    COORD c;
+    c.X = 0;
+    c.Y = 0;
+    std::string s;
+    std::ostringstream ss;
+    int hp = ((Player*)en[0])->getHp();
+    ss << "HP: " << std::to_string(hp);
+    g_Console.writeToBuffer(c, ss.str(), 0x17);
+}
+
 void displayCoin()
 {
     if (g_eGameState == S_GAME)
     {
         COORD c;
-        c.X = g_Console.getConsoleSize().X / 4;
+        c.X = (g_Console.getConsoleSize().X / 4) - 10;
         c.Y = 0;
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        ss << "Coin : " << std::to_string(WS);
+        ss << "COIN : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
     else if (g_eGameState == S_UPGRADESCREEN)
@@ -1304,7 +1346,7 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        ss << "Coin : " << std::to_string(WS);
+        ss << "COIN : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
 }
@@ -1312,7 +1354,7 @@ void displayCoin()
 void displayWave()
 {
     COORD c;
-    c.X = g_Console.getConsoleSize().X/2;
+    c.X = (g_Console.getConsoleSize().X / 4) * 3 ;
     c.Y = 0;
     std::string s;
     std::ostringstream ss;
