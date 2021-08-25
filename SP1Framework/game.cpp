@@ -530,7 +530,7 @@ void bossAttacks()
             if (bs->getm_activr())
             {
 
-                createBullet(bs->getCoordX(), bs->getCoordY(), 45, dir, 1);
+                createBullet(bs->getCoordX(), bs->getCoordY(), 45, dir, 0);
             }
         }
         else if (bs->getAttack() == 2)
@@ -547,7 +547,8 @@ void bossAttacks()
             int face = bs->Attack2(a.X , a.Y);
             if (face != 0)
             {
-                createBullet(temp, a.Y, 45, face, 1);
+                createBullet(temp, a.Y, 45, face, 0);
+                
             }
              if (timer >= 1)
              {
@@ -581,6 +582,7 @@ void bossAttacks()
              {
                  timer +=0.05 ;
              }
+
 
 
         }
@@ -828,9 +830,11 @@ void enShoot()
 void createBullet(int x,int y,char t,int dir, int i)
 {
     en.push_back(new bullet(x, y, dir,t));
+    PlaySound(NULL, NULL, 0);
     if (i == 3) PlaySound(TEXT("playerLaserSFX.wav"), NULL, SND_ASYNC);
     else if (i == 1) PlaySound(TEXT("pewSFX.wav"), NULL, SND_ASYNC);
     else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
+    else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);
 }
 void moveEnemy()
 {
