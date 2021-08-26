@@ -832,7 +832,7 @@ void renderExplodsion()
 {
     for (size_t i = 0; i < rkt.size(); i++)
     {
-        WORD charColor = 0xCC;
+        WORD charColor = 0x44;
 
         COORD temp;
         temp.X = rkt[i]->getCoordX();
@@ -847,9 +847,20 @@ void renderExplodsion()
             {
                 if (rkt[i]->getshape(j, k) == 1)
                 {
-                    if (temp.Y >= 2)
+                    if (k == 0 || k == 4 || j == 0 || j == 4)
                     {
-                        g_Console.writeToBuffer(temp, "0 ", charColor);
+                        if (temp.Y >= 2)
+                        {
+                            g_Console.writeToBuffer(temp, "0 ", charColor);
+                        }
+                    }
+                    else
+                    {
+                        charColor = 0x66;
+                        if (temp.Y >= 2)
+                        {
+                            g_Console.writeToBuffer(temp, "0 ", charColor);
+                        }
                     }
                 }
                 temp.X += 2;
@@ -1118,10 +1129,9 @@ void displayError()
     if (error.str() != "")
     {
         COORD c = g_Console.getConsoleSize();
-        c.Y=
-        c.Y /3 + 5;
+        c.Y = c.Y / 3 + 8;
         c.X = c.X / 2 - 9;
-        g_Console.writeToBuffer(c, error.str(), 0x09);
+        g_Console.writeToBuffer(c, error.str(), 0x04);
     }
 }
 void enShoot()
@@ -1336,6 +1346,7 @@ void renderUpgradeScreen() // renders the upgrade screen - Faz
         std::ostringstream ss;
         COORD c = g_Console.getConsoleSize();
         c.Y /= 3;
+        c.Y += 2;
         c.X = c.X / 2 - 8;
         ss << "Select Upgrade";
         g_Console.writeToBuffer(c, ss.str(), 0x03);
@@ -1645,7 +1656,7 @@ void displayHP()
     std::string s;
     std::ostringstream ss;
     int hp = ((Player*)en[0])->getHp();
-    ss << " HP: " << std::to_string(hp) << " ";
+    ss << " HP : " << std::to_string(hp) << " ";
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
 
@@ -1654,23 +1665,23 @@ void displayCoin()
     if (g_eGameState == S_GAME)
     {
         COORD c;
-        c.X = (g_Console.getConsoleSize().X / 4) - 10;
+        c.X = (g_Console.getConsoleSize().X / 4) - 5;
         c.Y = 0;
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        ss << " COIN : " << std::to_string(WS) << " ";
+        ss << " COINS : " << std::to_string(WS) << " ";
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
     else if (g_eGameState == S_UPGRADESCREEN)
     {
-        COORD c;
-        c.X = g_Console.getConsoleSize().X / 2 - 6;
-        c.Y = 4;
+        COORD c = g_Console.getConsoleSize();
+        c.X = g_Console.getConsoleSize().X / 2 - 7;
+        c.Y /= 3;
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        ss << "COIN : " << std::to_string(WS);
+        ss << " COINS : " << std::to_string(WS) << " ";
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
 }
