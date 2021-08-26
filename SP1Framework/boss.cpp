@@ -2,7 +2,6 @@
 
 boss::boss(COORD cord)
 {
-
 	hp = 20;
 	bossDir = 0;
 	bossface = 1;
@@ -16,8 +15,8 @@ boss::boss(COORD cord)
 	setm_bActive(false);
 	SetFireRate(1);
 	SetFireC(0);
-	setspeed(0.15f);
-	//player = { 0,0 };
+	setspeed(0.15);
+	player = { 0,0 };
 	inverse = false;
 
 	moveDir = 1;
@@ -29,7 +28,11 @@ int boss::getshape(int x, int y)
 {
 	return shape[bossface][y][x];
 }
+COORD boss::getCord()
+{
+	return c;
 
+}
 int boss::Attack2(int x, int y)
 {
 
@@ -199,6 +202,11 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 }
 
 
+void boss::getPlayer(COORD p)
+{
+	player.X = getCoordX() - p.X;
+	player.Y = getCoordY() - p.Y;
+}
 
 bool boss::getWall(COORD wall)//attack 1 charge to player
 {

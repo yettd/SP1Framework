@@ -6,8 +6,8 @@ class boss :
 {
 private:
 	int hp;
-	//COORD c;
-	//COORD player;
+	COORD c;
+	COORD player;
 	int bossDir;
 	int bossface;
 
@@ -79,12 +79,15 @@ public:
 	int getDirYfromPlayer(int y);
 	void movement(int dir);
 	int getshape(int x, int y);
+	COORD getCord();
+
 
 	void idel();
 	void ATTACK1();
 	int Attack2(int x, int y);
 
 
+	void getPlayer(COORD p);
 
 	bool getWall(COORD wall);
 

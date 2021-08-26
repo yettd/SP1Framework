@@ -1,18 +1,5 @@
 #include "entity.h"
 
-entity::entity()
-{
-    FireRate = 0;
-    fireCharge = 0;
-    m_bActive = false;
-    speed = 0;
-    sym = ' ';
-    tag = 0;
-    my = 0;
-    mx = 0;
-    Location = { 0,0 };
-}
-
 int entity::getCoordX()
 {
     return Location.X;

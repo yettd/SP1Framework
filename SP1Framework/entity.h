@@ -18,7 +18,6 @@ protected:
 	float my;
 
 public:
-	entity();
 	int getCoordX();
 	int getCoordY();
 	void setCoordX(int i);
