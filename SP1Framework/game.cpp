@@ -13,6 +13,8 @@
 #include "enemy.h"
 #include "boss.h"
 #include "star.h"
+#include "Rocekt.h"
+#include "powerUp.h"
 float spawnCounter = 2;
 float spawnRate = spawnCounter;
 int face = 1;
@@ -23,7 +25,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime =10 ;
 float currTime = 0;
-int wave = 1;
+int wave = 10;
 int maxenemy = 3;
 int current = 0;
 //level for each upgrade
@@ -45,6 +47,7 @@ SMouseEvent g_mouseEvent;
 float spawnStar = 2.5;
 std::vector<star*> stars;
 
+std::vector<Rocekt*> rkt;
 
 std::vector<entity*> en;
 std::ostringstream error;
@@ -55,6 +58,13 @@ EGAMESTATES g_eGameState = S_SPLASHSCREEN; // initial state
 
 // Console object
 Console g_Console(80, 25, "SP1 Framework");
+
+//power-ups
+bool triBullet = false;
+bool rocket = false;
+
+float tribulletTimer = 10;
+float rocketTimer = 10;
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -264,12 +274,12 @@ void gameplayMouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 
 void IframeCool()
 {
-    if (iframeCD >= 1 && ((Player*)en[0])->getiframe()==false)
+    if (iframeCD >= 1 && ((Player*)en[0])->getiframe()==true)
     {
-        ((Player*)en[0])->setiframe(true);
+        ((Player*)en[0])->setiframe(false);
         iframeCD =0;
     }
-    else if(((Player*)en[0])->getiframe() == false)
+    else if(((Player*)en[0])->getiframe() == true)
     {
         iframeCD += 0.01;
     }
@@ -308,10 +318,10 @@ void bossCollision()
                             }
                             else if (en[i]->getTag() == 'P')
                             {
-                                if (((Player*)en[i])->getiframe())
+                                if ( !((Player*)en[i])->getiframe())
                                 {
                                     ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
-                                    ((Player*)en[i])->setiframe(false);
+                                    ((Player*)en[i])->setiframe(true);
                                 }
                             }
                         }
@@ -325,7 +335,6 @@ void bossCollision()
         }
         temp.Y = temp2y;
     }
-
     //checkhp
     if (bs->gethp() <= 0)
     {
@@ -348,36 +357,73 @@ void collisionDetection()
                     {
                         if (en[j]->getTag() == 45 || en[j]->getTag() == 'E')
                         {
-                            delete en[j];
-                            en.erase(en.begin() + j);
-                            if (((Player*)en[i])->getiframe())
-                            {
-                                ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
-                                ((Player*)en[i])->setiframe(false);
-                            }
-                            j--;
                             if (en[j]->getTag() == 'E')
                             {
                                 current--;
                             }
+                            delete en[j];
+                            en.erase(en.begin() + j);
+                            if (!((Player*)en[i])->getiframe())
+                            {
+                                ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
+                                ((Player*)en[i])->setiframe(true);
+                            }
+                            j--;
+                           
+                        }
+                         if (en[j]->getTag()=='U')
+                        {
+                        
+                            if (((powerUp*)en[j])->getpower() == 1)
+                            {
+                                triBullet = true;
+                                tribulletTimer = 5;
+                            }
+                            else
+                            {
+                                rocket = true;
+                                rocketTimer = 5;
+                            }
+                            delete en[j];
+                            en.erase(en.begin() + j);
+
+                            j--;
                         }
                     }
                     else if (en[i]->getTag() == 'E')
                     {             
                         if (en[j]->getTag() == 43)
                         {
+                            if (rocket)
+                            {
+                                rkt.push_back(new Rocekt(en[i]->getCoordX(), en[i]->getCoordY()));
+                            }
                             if (((enemy*)en[i])->getAI() == 0)
                             {
                                 ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 2);
+                                if ((rand() % 100) %2 == 0)
+                                {
+                                    en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
+                                }
                             }
                             else if (((enemy*)en[i])->getAI() == 1)
                             {
                                 ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 10);
+                                if ((rand() % 100) % 5 == 0)
+                                {
+                                    en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
+                                }
                             }
                             else if (((enemy*)en[i])->getAI() == 2)
                             {
+                                if ((rand() % 100) % 6 == 0)
+                                {
+                                    en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
+                                }
                                 ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 5);
                             }
+                            //drop stuff
+
 
                             delete en[j];
                             delete en[i];
@@ -394,6 +440,7 @@ void collisionDetection()
                             }
                             i--;
                             j--;
+                         
                         }
                     }
                     
@@ -466,7 +513,7 @@ void updateGame()       // gameplay logic
         if (en.size() == 1)
         {
             en.push_back(new boss(g_Console.getConsoleSize()));
-            currTime = 30;
+            //currTime = 30;
         }
         bossAttacks();
        
@@ -484,14 +531,13 @@ void updateGame()       // gameplay logic
     enShoot();
     IframeCool();
     collisionDetection();
+    explosionCollision();
     if (wave == 10)
     {
         bossCollision();
     }
     checkLose();
-
-
-    //spawnEnemy();
+    powerUpTimer();
 }
 
 float bossAttackTimer = 5;//how long before next move
@@ -694,6 +740,8 @@ void upgradeScreenInput()
         current = 0;
         error.str("");
         spawnRate = spawnCounter;
+        tribulletTimer = -1;
+        rocketTimer = -1;
     }
     
 }
@@ -713,6 +761,124 @@ void createStar()
         spawnStar -= 0.50;
     }
 }
+void powerUpTimer()
+{
+    if (triBullet)
+    {
+        if (tribulletTimer > 0)
+        {
+            tribulletTimer -= 0.01;
+        }
+        else
+        {
+            triBullet = false;
+        }
+    }
+    if (rocket)
+    {
+        if (rocketTimer > 0)
+        {
+            rocketTimer -= 0.01;
+        }
+        else
+        {
+            rocketTimer = false;
+        }
+    }
+}
+
+
+void renderExplodsion()
+{
+    for (int i = 0; i < rkt.size(); i++)
+    {
+        WORD charColor = 0xCC;
+
+        COORD temp;
+        temp.X = rkt[i]->getCoordX();
+        temp.Y = rkt[i]->getCoordY();
+        temp.X -= 4;
+        temp.Y -= 2;
+        int temp2 = temp.X;
+
+        for (int k = 0; k < 5; k++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                if (rkt[i]->getshape(j, k) == 1)
+                {
+                    g_Console.writeToBuffer(temp, "0 ", charColor);
+                }
+                temp.X += 2;
+            }
+            temp.X = temp2;
+            temp.Y += 1;
+        }
+
+        if (rkt[i]->getTimer() > 0)
+        {
+            rkt[i]->setTimer(rkt[i]->getTimer() - 0.01);
+        }
+        else
+        {
+            delete rkt[i];
+            rkt.erase(rkt.begin()+i);
+        }
+    }
+    
+}
+
+void explosionCollision()
+{
+    for (int i = 0; i < rkt.size(); i++)
+    {
+        COORD temp;
+        temp.X = rkt[i]->getCoordX();
+        temp.Y = rkt[i]->getCoordY();
+        temp.X -= 4;
+        temp.Y -= 2;
+        int temp2y = temp.Y;
+        int temp2x = temp.X;
+
+        for (int e = 1; e < en.size(); e++)
+        {
+                for (int k = 0; k < 5; k++)
+                {
+                    for (int j = 0; j < 5; j++)
+                    {
+                        if (rkt[i]->getshape(j, k) == 1)
+                        {
+                            if ((en[e]->getCoordX() == temp.X || en[e]->getCoordX() == temp.X + 1) && en[e]->getCoordY() == temp.Y)
+                            {
+                                 if (en[e]->getTag() == 'E')
+                                {
+                                     if (((enemy*)en[i])->getAI() == 0)
+                                     {
+                                         ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 2);
+                                     }
+                                     else if (((enemy*)en[i])->getAI() == 1)
+                                     {
+                                         ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 10);
+                                     }
+                                     else if (((enemy*)en[i])->getAI() == 2)
+                                     {
+                                         ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 5);
+                                     }
+                                     delete en[e];
+                                     en.erase(en.begin() + e);
+                                }
+                            }
+                        }
+                        temp.X += 2;
+                    }
+                    temp.X = temp2x;
+                    temp.Y += 1;
+                }
+            temp.Y = temp2y;
+        }
+    }
+}
+
 void renderStar()
 {
     for (int i = 0; i < stars.size(); i++)
@@ -793,7 +959,7 @@ void winScreenInput()
         g_bQuitGame = true;
     }
 }
-
+int ThreeFace[3] = { 0,0,0 };
 void moveCharacter()
 {    
     // Updating the location of the character based on the key release
@@ -824,7 +990,45 @@ void moveCharacter()
     }
     if (g_skKeyEvent[K_SPACE].keyDown && en[0]->getm_activr() == true)
     {
-        createBullet(en[0]->getCoordX(), en[0]->getCoordY(),43,lastface, 3);
+        if (triBullet)
+        {
+     
+            if (lastface == 1 || lastface==-1)
+            {
+                ThreeFace[0] = lastface;
+                ThreeFace[1] = lastface+3;
+                ThreeFace[2] = lastface-3;
+            }
+            else if (lastface == 3 || lastface == -3)
+            {
+                ThreeFace[0] = lastface;
+                ThreeFace[1] = lastface + 1;
+                ThreeFace[2] = lastface - 1;
+            }
+            else if (lastface == 4 || lastface == -4)
+            {
+                ThreeFace[0] = lastface;
+                ThreeFace[1] = lastface - (1*(lastface/4));
+                ThreeFace[2] = lastface - (3 * (lastface / 4));
+            }
+            else if (lastface == 2 || lastface == -2)
+            {
+                ThreeFace[0] = lastface;
+                ThreeFace[1] = lastface + (1 * (lastface / 2));
+                ThreeFace[2] = lastface - (3 * (lastface / 2));
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+
+            createBullet(en[0]->getCoordX(), en[0]->getCoordY(), 43, ThreeFace[i], 3);
+            }
+
+        }
+        else
+        {
+          createBullet(en[0]->getCoordX(), en[0]->getCoordY(), 43, lastface, 3);
+        }
         en[0]->setm_bActive(false);
 
     }
@@ -1030,6 +1234,7 @@ void renderSplashScreen()  // renders the splash screen
 void renderGame()
 {
     renderStar();
+    renderExplodsion();
     renderEntity();
     displayStats();
     displayHP();
@@ -1173,7 +1378,7 @@ void renderEntity()
             WORD charColor = 0x17;
             if (en[i]->getTag() == 'P')
             {
-                if (((Player*)en[i])->getiframe())
+                if (!((Player*)en[i])->getiframe())
                 {
                     charColor = 0x17;
 
@@ -1181,12 +1386,23 @@ void renderEntity()
                 else
                 {
                     charColor = 0x6F;
-
                 }
             }
             else if (en[i]->getTag() == 43)
             {
                 charColor = 0x06;
+            }
+            else if (en[i]->getTag()=='U')
+            {
+                if (((powerUp*)en[i])->getpower()==1)
+                {
+                    charColor = 0x17;
+
+                }
+                else
+                {
+                    charColor = 0x6F;
+                }
             }
             else
             {
@@ -1350,10 +1566,6 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        if (stars.size() > 1)
-        {
-            WS = stars[0]->getCoordX();
-        }
         ss << "COIN : " << std::to_string(WS);
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }

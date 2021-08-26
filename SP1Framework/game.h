@@ -125,4 +125,10 @@ void bossAttacks();
 void createStar();
 void renderStar();
 
+//powerUp
+void powerUpTimer();
+
+void renderExplodsion();
+void explosionCollision();
+
 #endif // _GAME_H

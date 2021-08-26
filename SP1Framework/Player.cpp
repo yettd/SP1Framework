@@ -11,7 +11,7 @@ Player::Player()
 	setTag('P');
 	setm_bActive(true);
 	SetFireC(0);
-	setiframe(true);
+	setiframe(false);
 	mx = 0;
 	my = 0;
 	hp = 3;

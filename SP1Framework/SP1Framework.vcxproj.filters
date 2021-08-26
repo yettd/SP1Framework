@@ -51,6 +51,12 @@
     <ClCompile Include="star.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Rocekt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="powerUp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\console.h">
@@ -78,6 +84,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="star.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rocekt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="powerUp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
