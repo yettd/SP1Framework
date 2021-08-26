@@ -25,7 +25,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime =10 ;
 float currTime = 0;
-int wave = 1;
+int wave = 10;
 int maxenemy = 3;
 int current = 0;
 //level for each upgrade
@@ -61,7 +61,7 @@ Console g_Console(80, 25, "SP1 Framework");
 
 //power-ups
 bool triBullet = false;
-bool rocket = true;
+bool rocket = false;
 
 float tribulletTimer;
 float rocketTimer=1000;
@@ -302,28 +302,29 @@ void bossCollision()
     int temp2y = temp.Y;
     int temp2x = temp.X;
     
-    for (size_t i = 0; i < en.size(); i++)
+    
+       
+    for (int k = 0; k < 5; k++)
     {
-        if (i != 1)//not checking with boss
+        for (int j = 0; j < 5; j++)
         {
-            for (int k = 0; k < 5; k++)
+            if (bs->getshape(j, k) == 1)
             {
-                for (int j = 0; j < 5; j++)
+                for (size_t i = 0; i < en.size(); i++)
                 {
-                    if (bs->getshape(j, k) == 1)
+                    if (en[i]->getTag() == 43 || en[i]->getTag() == 'P')
                     {
                         if ((en[i]->getCoordX() == temp.X || en[i]->getCoordX() == temp.X + 1) && en[i]->getCoordY() == temp.Y)
                         {
                             if (en[i]->getTag() == 43)
                             {
                                 delete en[i];
-                                en.erase(en.begin() + i);
+                                en[i] = nullptr;
                                 bs->sethp(bs->gethp() - 1);
-                                i--;
                             }
                             else if (en[i]->getTag() == 'P')
                             {
-                                if ( !((Player*)en[i])->getiframe())
+                                if (!((Player*)en[i])->getiframe())
                                 {
                                     ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
                                     ((Player*)en[i])->setiframe(true);
@@ -331,15 +332,17 @@ void bossCollision()
                             }
                         }
                     }
-                    temp.X += 2;
                 }
-                temp.X = temp2x;
-                temp.Y += 1;
+                cleanUPmess();
+       
             }
-            
+            temp.X += 2;
         }
-        temp.Y = temp2y;
+        temp.X = temp2x;
+        temp.Y += 1;
     }
+    temp.Y = temp2y;
+    
     //checkhp
     if (bs->gethp() <= 0)
     {
@@ -536,7 +539,6 @@ void updateGame()       // gameplay logic
     moveBullet();
     enShoot();
     IframeCool();
-    checkLose();
     powerUpTimer();
     collisionDetection();
     explosionCollision();
@@ -545,6 +547,7 @@ void updateGame()       // gameplay logic
     {
         bossCollision();
     }
+    checkLose();
     cleanUPmess();
 }
 
