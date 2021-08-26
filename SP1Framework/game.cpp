@@ -25,7 +25,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime =10 ;
 float currTime = 0;
-int wave = 10;
+int wave = 1;
 int maxenemy = 3;
 int current = 0;
 //level for each upgrade
