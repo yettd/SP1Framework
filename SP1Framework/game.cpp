@@ -703,6 +703,7 @@ void upgradeScreenInput()
             ug1 += 5;
             currTime = defTime;
             ug1lvl++;
+            PlaySound(TEXT("kachingSFX"), NULL, SND_ASYNC);
         }
         else
         {
@@ -725,6 +726,7 @@ void upgradeScreenInput()
             ug2 += 5;
             currTime = defTime;
             ug2lvl++;
+            PlaySound(TEXT("kachingSFX"), NULL, SND_ASYNC);
         }
         else
         {
@@ -745,6 +747,7 @@ void upgradeScreenInput()
             ug3 += 5;
             currTime = defTime;
             ug3lvl++;
+            PlaySound(TEXT("kachingSFX"), NULL, SND_ASYNC);
         }
         else
         {
