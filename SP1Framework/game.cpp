@@ -350,9 +350,9 @@ void collisionDetection()
     {
         for (size_t j = 0; j < en.size(); j++)
         {
-            if (en[i] != nullptr && en[j] != nullptr)
+            if (i != j)
             {
-                if (i != j)
+                if (en[i] != nullptr && en[j] != nullptr)
                 {
                     if (en[i]->getCoordX() == en[j]->getCoordX() && en[i]->getCoordY() == en[j]->getCoordY())
                     {
@@ -880,30 +880,33 @@ void explosionCollision()
 
         for (size_t e = 1; e < en.size(); e++)
         {
-                for (int k = 0; k < 5; k++)
+           
+            for (int k = 0; k < 5; k++)
+            {
+                for (int j = 0; j < 5; j++)
                 {
-                    for (int j = 0; j < 5; j++)
+                    if (rkt[i]->getshape(j, k) == 1)
                     {
-                        if (rkt[i]->getshape(j, k) == 1)
+                        if (en[e] != nullptr)
                         {
                             if ((en[e]->getCoordX() == temp.X || en[e]->getCoordX() == temp.X + 1) && en[e]->getCoordY() == temp.Y)
                             {
-                                 if (en[e]->getTag() == 'E')
+                                if (en[e]->getTag() == 'E')
                                 {
-                                     if (((enemy*)en[i])->getAI() == 0)
-                                     {
-                                         ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 2);
-                                     }
-                                     else if (((enemy*)en[i])->getAI() == 1)
-                                     {
-                                         ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 10);
-                                     }
-                                     else if (((enemy*)en[i])->getAI() == 2)
-                                     {
-                                         ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 5);
-                                     }
-                                     delete en[e];
-                                     en.erase(en.begin() + e);
+                                    if (((enemy*)en[i])->getAI() == 0)
+                                    {
+                                        ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 2);
+                                    }
+                                    else if (((enemy*)en[i])->getAI() == 1)
+                                    {
+                                        ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 10);
+                                    }
+                                    else if (((enemy*)en[i])->getAI() == 2)
+                                    {
+                                        ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 5);
+                                    }
+                                    delete en[e];
+                                    en[e] = nullptr;
                                 }
                             }
                         }
@@ -912,7 +915,16 @@ void explosionCollision()
                     temp.X = temp2x;
                     temp.Y += 1;
                 }
-            temp.Y = temp2y;
+                temp.Y = temp2y;
+            }
+           
+        }
+    }
+    for (size_t i = 0; i < en.size(); i++)
+    {
+        if (en[i] == nullptr)
+        {
+            en.erase(en.begin() + i);
         }
     }
 }
@@ -959,6 +971,9 @@ void loseScreenInput() // get inputs to restart or quit - Faz
         ug1lvl = 1;
         ug2lvl = 1;
         ug3lvl = 1;
+
+        tribulletTimer = 0;
+        rocketTimer = 0;
     }
     else if (g_skKeyEvent[K_ESCAPE].keyDown)
     {
@@ -992,6 +1007,9 @@ void winScreenInput() // get inputs to restart or quit - Faz
         ug1lvl = 1;
         ug2lvl = 1;
         ug3lvl = 1;
+
+        tribulletTimer = 0;
+        rocketTimer = 0;
     }
     else if (g_skKeyEvent[K_ESCAPE].keyDown)
     {
