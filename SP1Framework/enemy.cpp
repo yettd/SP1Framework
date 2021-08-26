@@ -9,7 +9,7 @@ enemy::enemy()
 	setm_bActive(false);
 	SetFireRate(1);
 	SetFireC(0);
-	setspeed(0.075);
+	setspeed(0.075f);
 	setCoord();
 
 	wall = false;
@@ -269,7 +269,6 @@ int enemy::shootDir(int x, int y)
 
 }
 
-
 int enemy::getDirXfromPlayer(int x)
 {
 	int disX = x - getCoordX();
@@ -296,7 +295,7 @@ void enemy::setAI()
 	{
 		//Dumb
 		AI = 0;
-		setspeed(0.05);
+		setspeed(0.05f);
 	}
 	else if (ran <= 80)
 	{
@@ -308,8 +307,8 @@ void enemy::setAI()
 	{
 		//Aggressive
 		AI = 1;
-		setspeed(0.015);
-		SetFireRate(0.2);
+		setspeed(0.015f);
+		SetFireRate(0.2f);
 	}
 	
 

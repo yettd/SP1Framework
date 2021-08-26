@@ -2,6 +2,7 @@
 
 bullet::bullet()
 {
+	direection = 0;
 	setSym(0);
 	setCoordX(0);
 	setCoordY(0);

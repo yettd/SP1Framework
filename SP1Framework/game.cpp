@@ -350,103 +350,100 @@ void collisionDetection()
     {
         for (size_t j = 0; j < en.size(); j++)
         {
-            if (i != j)
+            if (en[i] != nullptr && en[j] != nullptr)
             {
-                if (en[i]->getCoordX() == en[j]->getCoordX() && en[i]->getCoordY() == en[j]->getCoordY())
+                if (i != j)
                 {
-                    if (en[i]->getTag() == 'P')
+                    if (en[i]->getCoordX() == en[j]->getCoordX() && en[i]->getCoordY() == en[j]->getCoordY())
                     {
-                        if (en[j]->getTag() == 45 || en[j]->getTag() == 'E')
+                        if (en[i]->getTag() == 'P')
                         {
-                            if (en[j]->getTag() == 'E')
+                            if (en[j]->getTag() == 45 || en[j]->getTag() == 'E')
                             {
+                                if (en[j]->getTag() == 'E')
+                                {
+                                    current--;
+                                }
+                                if (!((Player*)en[i])->getiframe())
+                                {
+                                    ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
+                                    ((Player*)en[i])->setiframe(true);
+                                }
+                                delete en[j];
+                                en[j] = nullptr;
+
+                            }
+                            else if (en[j]->getTag() == 'U')
+                            {
+
+                                if (((powerUp*)en[j])->getpower() == 1)
+                                {
+                                    triBullet = true;
+                                    tribulletTimer = 5;
+                                }
+                                else
+                                {
+                                    rocket = true;
+                                    rocketTimer = 5;
+                                }
+                                delete en[j];
+                                en[j] = nullptr;
+                            }
+                        }
+                        else if (en[i]->getTag() == 'E')
+                        {
+                            if (en[j]->getTag() == 43)
+                            {
+                                if (rocket)
+                                {
+                                    rkt.push_back(new Rocekt(en[i]->getCoordX(), en[i]->getCoordY()));
+                                }
+                                if (((enemy*)en[i])->getAI() == 0)
+                                {
+                                    ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 2);
+                                    if ((rand() % 100) % 2 == 0)
+                                    {
+                                        en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
+                                    }
+                                }
+                                else if (((enemy*)en[i])->getAI() == 1)
+                                {
+                                    ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 10);
+                                    if ((rand() % 100) % 5 == 0)
+                                    {
+                                        en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
+                                    }
+                                }
+                                else if (((enemy*)en[i])->getAI() == 2)
+                                {
+                                    if ((rand() % 100) % 6 == 0)
+                                    {
+                                        en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
+                                    }
+                                    ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 5);
+                                }
+                                //drop stuff
+
+
+                                delete en[j];
+                                delete en[i];
+
+                                en[j] = nullptr;
+                                en[i] = nullptr;
                                 current--;
                             }
-                            delete en[j];
-                            en.erase(en.begin() + j);
-                            if (!((Player*)en[i])->getiframe())
-                            {
-                                ((Player*)en[i])->setHp(((Player*)en[i])->getHp() - 1);
-                                ((Player*)en[i])->setiframe(true);
-                            }
-                            j--;
-                           
                         }
-                         if (en[j]->getTag()=='U')
-                        {
-                        
-                            if (((powerUp*)en[j])->getpower() == 1)
-                            {
-                                triBullet = true;
-                                tribulletTimer = 5;
-                            }
-                            else
-                            {
-                                rocket = true;
-                                rocketTimer = 5;
-                            }
-                            delete en[j];
-                            en.erase(en.begin() + j);
 
-                            j--;
-                        }
                     }
-                    else if (en[i]->getTag() == 'E')
-                    {             
-                        if (en[j]->getTag() == 43)
-                        {
-                            if (rocket)
-                            {
-                                rkt.push_back(new Rocekt(en[i]->getCoordX(), en[i]->getCoordY()));
-                            }
-                            if (((enemy*)en[i])->getAI() == 0)
-                            {
-                                ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 2);
-                                if ((rand() % 100) %2 == 0)
-                                {
-                                    en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
-                                }
-                            }
-                            else if (((enemy*)en[i])->getAI() == 1)
-                            {
-                                ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 10);
-                                if ((rand() % 100) % 5 == 0)
-                                {
-                                    en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
-                                }
-                            }
-                            else if (((enemy*)en[i])->getAI() == 2)
-                            {
-                                if ((rand() % 100) % 6 == 0)
-                                {
-                                    en.push_back(new powerUp(en[i]->getCoordX(), en[i]->getCoordY(), rand() % 2));
-                                }
-                                ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() + 5);
-                            }
-                            //drop stuff
-
-
-                            delete en[j];
-                            delete en[i];
-                            current--;
-                            if (j < i)
-                            {
-                                en.erase(en.begin() + i);
-                                en.erase(en.begin() + j);
-                            }
-                            else
-                            {
-                                en.erase(en.begin() + j);
-                                en.erase(en.begin() + i);
-                            }
-                            i--;
-                            j--;
-                         
-                        }
-                    }
-                    
                 }
             }
+        }
+    }
+    for (size_t i = 0; i < en.size(); i++)
+    {
+        if (en[i] == nullptr)
+        {
+            en.erase(en.begin() + i);
         }
     }
 }
@@ -943,7 +940,6 @@ void loseScreenInput() // get inputs to restart or quit - Faz
     {
         lastface = 1;
         clearEnemy(0);
-        en.clear();
         wave = 1;
         currTime = defTime;
         en.push_back(new Player);
