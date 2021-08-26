@@ -721,7 +721,7 @@ void upgradeScreenInput()
             error.str("");
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug2);
             float speed = en[0]->getSpeed();
-            speed += 0.05;
+            speed += 0.02;
             en[0]->setspeed(speed);
             ug2 += 5;
             currTime = defTime;
@@ -937,6 +937,7 @@ void loseScreenInput()
 {
     if (g_skKeyEvent[K_SPACE].keyDown)
     {
+        lastface = 1;
         clearEnemy(0);
         en.clear();
         wave = 1;
@@ -969,6 +970,7 @@ void winScreenInput()
 {
     if (g_skKeyEvent[K_SPACE].keyDown)
     {
+        lastface = 1;
         clearEnemy(0);
         en.clear();
         wave = 1;
