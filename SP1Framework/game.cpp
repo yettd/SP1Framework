@@ -25,7 +25,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime =10 ;
 float currTime = 0;
-int wave = 10;
+int wave = 1;
 int maxenemy = 3;
 int current = 0;
 //level for each upgrade
@@ -63,8 +63,8 @@ Console g_Console(80, 25, "SP1 Framework");
 bool triBullet = false;
 bool rocket = false;
 
-float tribulletTimer = 10;
-float rocketTimer = 10;
+float tribulletTimer;
+float rocketTimer;
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -733,6 +733,7 @@ void upgradeScreenInput()
         en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         g_eGameState = S_GAME;
+        rkt.clear();
         updateWave();
         ((Player*)en[0])->setHp(((Player*)en[0])->getmHp());
         clearEnemy(1);
@@ -740,8 +741,8 @@ void upgradeScreenInput()
         current = 0;
         error.str("");
         spawnRate = spawnCounter;
-        tribulletTimer = -1;
-        rocketTimer = -1;
+        tribulletTimer = 0;
+        rocketTimer = 0;
     }
     
 }
@@ -782,7 +783,7 @@ void powerUpTimer()
         }
         else
         {
-            rocketTimer = false;
+            rocket = false;
         }
     }
 }
@@ -1067,11 +1068,11 @@ void enShoot()
 void createBullet(int x,int y,char t,int dir, int i)
 {
     en.push_back(new bullet(x, y, dir,t));
-    PlaySound(NULL, NULL, 0);
+   /* PlaySound(NULL, NULL, 0);
     if (i == 3) PlaySound(TEXT("playerLaserSFX.wav"), NULL, SND_ASYNC);
     else if (i == 1) PlaySound(TEXT("pewSFX.wav"), NULL, SND_ASYNC);
     else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
-    else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);
+    else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);*/
 }
 
 void moveEnemy()
