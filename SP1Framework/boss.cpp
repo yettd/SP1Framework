@@ -146,7 +146,7 @@ void boss::ATTACK1()//smart ai bascally but faster and shoot stright ahead
 
 		if (moveDir == 1 || moveDir == 2)
 		{
-			if (getCoordY() % 3 == 0)
+			if (getCoordY() % 1 == 0)
 			{
 				setm_bActive(true);
 			}

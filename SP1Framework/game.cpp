@@ -25,7 +25,7 @@ double  g_dElapsedTime;
 double  g_dDeltaTime;
 float defTime =10 ;
 float currTime = 0;
-int wave = 1;
+int wave = 10;
 int maxenemy = 3;
 int current = 0;
 //level for each upgrade
@@ -621,7 +621,7 @@ void bossAttacks()
              }
              else
              {
-                 timer +=0.05 ;
+                 timer +=0.2 ;
              }
 
 
@@ -1068,11 +1068,11 @@ void enShoot()
 void createBullet(int x,int y,char t,int dir, int i)
 {
     en.push_back(new bullet(x, y, dir,t));
-    PlaySound(NULL, NULL, 0);
+    /*PlaySound(NULL, NULL, 0);
     if (i == 3) PlaySound(TEXT("playerLaserSFX.wav"), NULL, SND_ASYNC);
     else if (i == 1) PlaySound(TEXT("pewSFX.wav"), NULL, SND_ASYNC);
     else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
-    else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);
+    else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);*/
 }
 
 void moveEnemy()
@@ -1314,7 +1314,7 @@ void renderWinScreen()
     g_Console.writeToBuffer(c, "YOU WIN", 0x03);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 5;
-    g_Console.writeToBuffer(c, "SCORE: ", 0x09);
+    
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 13;
     g_Console.writeToBuffer(c, "PRESS SPACE TO PLAY AGAIN", 0x09);
