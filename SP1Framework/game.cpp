@@ -1297,7 +1297,7 @@ void renderLoseScreen()
     g_Console.writeToBuffer(c, "YOU LOSE", 0x03);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 5;
-    g_Console.writeToBuffer(c, "SCORE: ", 0x09);
+    
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 13;
     g_Console.writeToBuffer(c, "PRESS SPACE TO PLAY AGAIN", 0x09);
