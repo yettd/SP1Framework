@@ -497,6 +497,7 @@ void updateGame()       // gameplay logic
     if (wave > 10)
     {
         g_eGameState = S_WIN;
+        PlaySound(TEXT("winSFX"), NULL, SND_ASYNC);
     }
 
     if (currTime <= 0)
@@ -514,6 +515,7 @@ void updateGame()       // gameplay logic
         {
             en.push_back(new boss(g_Console.getConsoleSize()));
             //currTime = 30;
+            PlaySound(TEXT("reeSFX.wav"), NULL, SND_SYNC);
         }
         bossAttacks();
        
@@ -1068,11 +1070,14 @@ void enShoot()
 void createBullet(int x,int y,char t,int dir, int i)
 {
     en.push_back(new bullet(x, y, dir,t));
-    /*PlaySound(NULL, NULL, 0);
-    if (i == 3) PlaySound(TEXT("playerLaserSFX.wav"), NULL, SND_ASYNC);
-    else if (i == 1) PlaySound(TEXT("pewSFX.wav"), NULL, SND_ASYNC);
-    else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
-    else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);*/
+    if (i != 0) 
+    {
+        PlaySound(NULL, NULL, 0);
+        if (i == 3) PlaySound(TEXT("playerLaserSFX.wav"), NULL, SND_ASYNC);
+        else if (i == 1) PlaySound(TEXT("pewSFX.wav"), NULL, SND_ASYNC);
+        else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
+    }
+    /*else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);*/
 }
 
 void moveEnemy()
