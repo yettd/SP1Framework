@@ -590,8 +590,36 @@ void bossAttacks()
             int face = bs->Attack2(a.X , a.Y);
             if (face != 0)
             {
-                createBullet(temp, a.Y, 45, face, 0);
-                
+                int ThreeFace[3];
+                if (face == 4 || face == -4)
+                {
+                    ThreeFace[0] = face;
+                    ThreeFace[1] = face - (1 * (face / 4));
+                    ThreeFace[2] = face - (3 * (face / 4));
+                    for (int i = 0; i < 3; i++)
+                    {
+
+                        createBullet(temp, a.Y, 45, ThreeFace[i], 3);
+                    }
+                }
+                else if (face == 2 || face == -2)
+                {
+                    ThreeFace[0] = face;
+                    ThreeFace[1] = face + (1 * (face / 2));
+                    ThreeFace[2] = face - (3 * (face / 2));
+                    for (int i = 0; i < 3; i++)
+                    {
+
+                        createBullet(temp, a.Y, 45, ThreeFace[i], 3);
+                    }
+                }
+                else
+                {
+                    createBullet(temp, a.Y, 45, face, 0);
+
+                }
+
+
             }
              if (timer >= 1)
              {
@@ -810,7 +838,10 @@ void renderExplodsion()
             {
                 if (rkt[i]->getshape(j, k) == 1)
                 {
-                    g_Console.writeToBuffer(temp, "0 ", charColor);
+                    if (temp.Y >= 2)
+                    {
+                        g_Console.writeToBuffer(temp, "0 ", charColor);
+                    }
                 }
                 temp.X += 2;
             }
