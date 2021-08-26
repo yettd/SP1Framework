@@ -966,6 +966,7 @@ void winScreenInput()
 {
     if (g_skKeyEvent[K_SPACE].keyDown)
     {
+        clearEnemy(0);
         en.clear();
         wave = 1;
         currTime = defTime;
@@ -976,7 +977,6 @@ void winScreenInput()
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         en[0]->setm_bActive(true);
         g_eGameState = S_GAME;
-        clearEnemy(0);
         spawnCounter = 2;
         updateMaxenemy();
         current = 0;
