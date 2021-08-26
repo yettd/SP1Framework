@@ -88,7 +88,7 @@ void init( void )
     en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
     en[0]->setm_bActive(true);
     // sets the width, height and the font name to use in the console
-    g_Console.setConsoleFont(0, 16, L"Consolas");
+    g_Console.setConsoleFont(17, 36, L"Consolas");
 
     // remember to set your keyboard handler, so that your functions can be notified of input events
     g_Console.setKeyboardHandler(keyboardHandler);
@@ -152,7 +152,7 @@ void keyboardHandler(const KEY_EVENT_RECORD& keyboardEvent)
 {    
     switch (g_eGameState)
     {
-    case S_SPLASHSCREEN: // don't handle anything for the splash screen
+    case S_SPLASHSCREEN:  gameplayKBHandler(keyboardEvent);// handle gameplay keyboard event 
         break;
     case S_GAME: gameplayKBHandler(keyboardEvent); // handle gameplay keyboard event 
         break;
@@ -239,6 +239,7 @@ void gameplayKBHandler(const KEY_EVENT_RECORD& keyboardEvent)
     case 97: key = K_LEFT; break;
     case 68:
     case 100: key = K_RIGHT; break;
+    case VK_RETURN: key = K_ENTER; break;
     case VK_SPACE: key = K_SPACE; break;
     case VK_ESCAPE: key = K_ESCAPE; break; 
     }
@@ -472,7 +473,7 @@ void update(double dt)
     g_dDeltaTime = dt;
     switch (g_eGameState)
     {
-        case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
+        case S_SPLASHSCREEN : splashScreenInput(); // game logic for the splash screen
             break;
         case S_GAME: updateGame();// gameplay logic when we are in the game
             break;
@@ -486,10 +487,16 @@ void update(double dt)
 }
 
 
-void splashScreenWait()    // waits for time to pass in splash screen
+void splashScreenInput()    // waits for user input to start game - Faz
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
+    if (g_skKeyEvent[K_ENTER].keyDown)
+    {
         g_eGameState = S_GAME;
+    }
+    else if (g_skKeyEvent[K_ESCAPE].keyDown)
+    {
+        g_bQuitGame = true;
+    }
 }
 
 void updateGame()       // gameplay logic
@@ -688,9 +695,9 @@ void bossAttacks()
   
 }
 
-void upgradeScreenInput()
+void upgradeScreenInput() // Upgrade System Faz
 {
-    if (g_skKeyEvent[K_NUM1].keyDown)
+    if (g_skKeyEvent[K_NUM1].keyDown) // get key for fire rate upgrade
     {
         if (((Player*)en[0])->getcoin() >= ug1)
         {
@@ -713,7 +720,7 @@ void upgradeScreenInput()
             }
         }
     }
-    else if (g_skKeyEvent[K_NUM2].keyDown)
+    else if (g_skKeyEvent[K_NUM2].keyDown) // get key for speed upgrade
     {
         if (((Player*)en[0])->getcoin() >= ug2)
         {
@@ -736,7 +743,7 @@ void upgradeScreenInput()
             }
         }
     }
-    else if (g_skKeyEvent[K_NUM3].keyDown)
+    else if (g_skKeyEvent[K_NUM3].keyDown) // get key for health upgrade
     {
         if (((Player*)en[0])->getcoin() >= ug3)
         {
@@ -757,11 +764,8 @@ void upgradeScreenInput()
             }
         }
     }
-    else if (g_skKeyEvent[K_NUM4].keyDown)
+    else if (g_skKeyEvent[K_NUM4].keyDown) // continue game
     {
-        //float speed = en[0]->getSpeed();
-        //speed += 0.05;
-        //en[0]->setspeed(speed);
         currTime = defTime;
         en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
@@ -933,9 +937,9 @@ void renderStar()
             }
     }
 }
-void loseScreenInput()
+void loseScreenInput() // get inputs to restart or quit - Faz
 {
-    if (g_skKeyEvent[K_SPACE].keyDown)
+    if (g_skKeyEvent[K_ENTER].keyDown)
     {
         lastface = 1;
         clearEnemy(0);
@@ -964,11 +968,11 @@ void loseScreenInput()
     {
         g_bQuitGame = true;
     }
-}
+} // 
 
-void winScreenInput()
+void winScreenInput() // get inputs to restart or quit - Faz
 {
-    if (g_skKeyEvent[K_SPACE].keyDown)
+    if (g_skKeyEvent[K_ENTER].keyDown)
     {
         lastface = 1;
         clearEnemy(0);
@@ -1258,34 +1262,39 @@ void renderToScreen()
     g_Console.flushBufferToConsole();
 }
 
-void renderSplashScreen()  // renders the splash screen
+float Chartimer = 5;
+int count = 0;
+void renderSplashScreen()  // renders the splash screen - Faz
 {
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
     c.Y +=  2;
     c.X = c.X / 2 - 6;
-    g_Console.writeToBuffer(c, "BATTLESHIP", 0x03);
+    g_Console.writeToBuffer(c, "BATTLESHIP", 0x06);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 7;
     g_Console.writeToBuffer(c, "WASD TO MOVE", 0x09);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 9;
     g_Console.writeToBuffer(c, "SPACEBAR TO FIRE", 0x09);
+    c.Y += 2;
+    c.X = g_Console.getConsoleSize().X / 2 - 11;
+    g_Console.writeToBuffer(c, "PRESS ENTER TO START", 0x09);
 }
 
 void renderGame()
 {
     renderStar();
+    renderMap();        // renders the map to the buffer first
     renderExplodsion();
     renderEntity();
     displayStats();
     displayHP();
     displayWave();
     displayCoin();
-    renderMap();        // renders the map to the buffer first
 }
 
-void renderUpgradeScreen()
+void renderUpgradeScreen() // renders the upgrade screen - Faz
 {
     if (wave < 10)
     {
@@ -1330,46 +1339,48 @@ void checkLose()
     }
 }
 
-void renderLoseScreen()
+void renderLoseScreen() // renders lose screen - Faz
 {
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
-    c.X = c.X / 2 - 4;
-    g_Console.writeToBuffer(c, "YOU LOSE", 0x03);
+    c.Y += 2;
+    c.X = c.X / 2 - 12;
+    g_Console.writeToBuffer(c, "YOU FELL INTO THE ABYSS", 0x0C);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 5;
     
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 13;
-    g_Console.writeToBuffer(c, "PRESS SPACE TO PLAY AGAIN", 0x09);
+    g_Console.writeToBuffer(c, "PRESS ENTER TO PLAY AGAIN", 0x09);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 10;
     g_Console.writeToBuffer(c, "PRESS ESCAPE TO QUIT", 0x09);
 }
 
-void renderWinScreen()
+void renderWinScreen() // renders win screen - Faz
 {
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
-    c.X = c.X / 2 - 4;
-    g_Console.writeToBuffer(c, "YOU WIN", 0x03);
+    c.Y += 2;
+    c.X = c.X / 2 - 12;
+    g_Console.writeToBuffer(c, "YOU DEFEATED THE EMPIRE", 0x03);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 5;
     
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 13;
-    g_Console.writeToBuffer(c, "PRESS SPACE TO PLAY AGAIN", 0x09);
+    g_Console.writeToBuffer(c, "PRESS ENTER TO PLAY AGAIN", 0x09);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 10;
     g_Console.writeToBuffer(c, "PRESS ESCAPE TO QUIT", 0x09);
 }
 
-void renderMap()
+void renderMap() // renders map border - Faz
 {
     // Set up sample colours, and output shadings
     const WORD colors[] = {
         0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6, 0x17
     };
 
     COORD c;
@@ -1577,11 +1588,11 @@ void displayStats()
     //int hp = ((Player*)en[0])->getHp();
     if (wave != 10)
     {
-        ss << "TIME : " << std::to_string(WS);
+        ss << " TIME : " << std::to_string(WS) << " ";
     }
     else
     {
-        ss << "BOSS HP : " << std::to_string(WS);
+        ss << " BOSS HP : " << std::to_string(WS) << " ";
     }
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
@@ -1594,7 +1605,7 @@ void displayHP()
     std::string s;
     std::ostringstream ss;
     int hp = ((Player*)en[0])->getHp();
-    ss << "HP: " << std::to_string(hp);
+    ss << " HP: " << std::to_string(hp) << " ";
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
 
@@ -1608,7 +1619,7 @@ void displayCoin()
         std::string s;
         std::ostringstream ss;
         int WS = ((Player*)en[0])->getcoin();
-        ss << "COIN : " << std::to_string(WS);
+        ss << " COIN : " << std::to_string(WS) << " ";
         g_Console.writeToBuffer(c, ss.str(), 0x17);
     }
     else if (g_eGameState == S_UPGRADESCREEN)
@@ -1632,7 +1643,7 @@ void displayWave()
     std::string s;
     std::ostringstream ss;
     int WS = floor(wave);
-    ss << "WAVE : " << std::to_string(WS);
+    ss << " WAVE : " << std::to_string(WS) << " ";
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
 

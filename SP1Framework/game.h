@@ -32,6 +32,7 @@ enum EKEYS
     K_RIGHT,
     K_ESCAPE,
     K_SPACE,
+    K_ENTER,
     K_NUM1,
     K_NUM2,
     K_NUM3,
@@ -63,7 +64,7 @@ void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
 
-void splashScreenWait();    // waits for time to pass in splash screen
+void splashScreenInput();    // waits for time to pass in splash screen
 void updateGame();          // gameplay logic
 void upgradeScreenInput();
 void loseScreenInput();
