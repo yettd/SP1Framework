@@ -132,4 +132,6 @@ void powerUpTimer();
 void renderExplodsion();
 void explosionCollision();
 
+void cleanUPmess();
+
 #endif // _GAME_H
