@@ -606,7 +606,7 @@ void bossAttacks()
                     for (int i = 0; i < 3; i++)
                     {
 
-                        createBullet(temp, a.Y, 45, ThreeFace[i], 3);
+                        createBullet(temp, a.Y, 45, ThreeFace[i], 0);
                     }
                 }
                 else if (face == 2 || face == -2)
@@ -617,7 +617,7 @@ void bossAttacks()
                     for (int i = 0; i < 3; i++)
                     {
 
-                        createBullet(temp, a.Y, 45, ThreeFace[i], 3);
+                        createBullet(temp, a.Y, 45, ThreeFace[i], 0);
                     }
                 }
                 else
@@ -1117,7 +1117,7 @@ void createBullet(int x,int y,char t,int dir, int i)
         else if (i == 1) PlaySound(TEXT("pewSFX.wav"), NULL, SND_ASYNC);
         else if (i == 2) PlaySound(TEXT("enemy1LaserSFX.wav"), NULL, SND_ASYNC);
     }
-    /*else if (i == 0) PlaySound(TEXT("shootSFX.wav"), NULL, SND_ASYNC);*/
+    
 }
 
 void moveEnemy()
