@@ -75,7 +75,7 @@ float rocketTimer;
 //--------------------------------------------------------------
 void init( void )
 {
-    srand(time(NULL));
+    srand(unsigned(time(NULL)));
     // Set precision for floating point output
     g_dElapsedTime = 0.0;    
     currTime = defTime;
@@ -83,7 +83,7 @@ void init( void )
     g_eGameState = S_SPLASHSCREEN;
     en.push_back(new Player);
     en[0]->setSym(94);
-    en[0]->setspeed(0.1);
+    en[0]->setspeed(0.1f);
     en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
     en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
     en[0]->setm_bActive(true);
@@ -194,13 +194,13 @@ void mouseHandler(const MOUSE_EVENT_RECORD& mouseEvent)
 void rechargeFire()
 {
     //fire rate for all
-    for (int i = 0; i < en.size(); i++)
+    for (size_t i = 0; i < en.size(); i++)
     {
         if (en[i]->getTag() == 'P' || en[i]->getTag() == 'E')
         {
             if (en[i]->getm_activr() == false)
             {
-                en[i]->SetFireC(en[i]->getFireC() + 0.01);
+                en[i]->SetFireC(en[i]->getFireC() + 0.01f);
                 if (en[i]->getFireC() >= en[i]->getFireRate())
                 {
                     en[i]->setm_bActive(true);
@@ -282,7 +282,7 @@ void IframeCool()
     }
     else if(((Player*)en[0])->getiframe() == true)
     {
-        iframeCD += 0.01;
+        iframeCD += 0.01f;
     }
 }
 
@@ -298,7 +298,7 @@ void bossCollision()
     int temp2y = temp.Y;
     int temp2x = temp.X;
     
-    for (int i = 0; i < en.size(); i++)
+    for (size_t i = 0; i < en.size(); i++)
     {
         if (i != 1)//not checking with boss
         {
@@ -346,9 +346,9 @@ void bossCollision()
 
 void collisionDetection()
 {
-    for (int i = 0; i < en.size(); i++)
+    for (size_t i = 0; i < en.size(); i++)
     {
-        for (int j = 0; j < en.size(); j++)
+        for (size_t j = 0; j < en.size(); j++)
         {
             if (i != j)
             {
@@ -529,7 +529,7 @@ void updateGame()       // gameplay logic
     }
     if (wave < 10)
     {
-        currTime -= 0.01;
+        currTime -= 0.01f;
     }
     createStar();
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
@@ -658,7 +658,7 @@ void bossAttacks()
              }
              else
              {
-                 timer +=0.2 ;
+                 timer +=0.2f;
              }
 
 
@@ -668,7 +668,7 @@ void bossAttacks()
         {
             bs->idel();
         }
-        bossAttackTimer -= 0.01;
+        bossAttackTimer -= 0.01f;
     }
     else
     {
@@ -687,7 +687,7 @@ void bossAttacks()
             {
                 bs->setAttack(rand()%2+1);
             }
-            bossAttackTimer = rand()%10+5;
+            bossAttackTimer = float(rand()%10+5);
         }
 
     }
@@ -705,7 +705,7 @@ void upgradeScreenInput() // Upgrade System Faz
             error.str("");
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug1);
             float fireRate = en[0]->getFireRate();
-            fireRate -= 0.1;
+            fireRate -= 0.1f;
             en[0]->SetFireRate(fireRate);
             ug1 += 5;
             currTime = defTime;
@@ -728,7 +728,7 @@ void upgradeScreenInput() // Upgrade System Faz
             error.str("");
             ((Player*)en[0])->setCoin(((Player*)en[0])->getcoin() - ug2);
             float speed = en[0]->getSpeed();
-            speed += 0.02;
+            speed += 0.02f;
             en[0]->setspeed(speed);
             ug2 += 5;
             currTime = defTime;
@@ -805,7 +805,7 @@ void powerUpTimer()
     {
         if (tribulletTimer > 0)
         {
-            tribulletTimer -= 0.01;
+            tribulletTimer -= 0.01f;
         }
         else
         {
@@ -816,7 +816,7 @@ void powerUpTimer()
     {
         if (rocketTimer > 0)
         {
-            rocketTimer -= 0.01;
+            rocketTimer -= 0.01f;
         }
         else
         {
@@ -828,7 +828,7 @@ void powerUpTimer()
 
 void renderExplodsion()
 {
-    for (int i = 0; i < rkt.size(); i++)
+    for (size_t i = 0; i < rkt.size(); i++)
     {
         WORD charColor = 0xCC;
 
@@ -858,7 +858,7 @@ void renderExplodsion()
 
         if (rkt[i]->getTimer() > 0)
         {
-            rkt[i]->setTimer(rkt[i]->getTimer() - 0.01);
+            rkt[i]->setTimer(rkt[i]->getTimer() - 0.01f);
         }
         else
         {
@@ -871,7 +871,7 @@ void renderExplodsion()
 
 void explosionCollision()
 {
-    for (int i = 0; i < rkt.size(); i++)
+    for (size_t i = 0; i < rkt.size(); i++)
     {
         COORD temp;
         temp.X = rkt[i]->getCoordX();
@@ -881,7 +881,7 @@ void explosionCollision()
         int temp2y = temp.Y;
         int temp2x = temp.X;
 
-        for (int e = 1; e < en.size(); e++)
+        for (size_t e = 1; e < en.size(); e++)
         {
                 for (int k = 0; k < 5; k++)
                 {
@@ -922,7 +922,7 @@ void explosionCollision()
 
 void renderStar()
 {
-    for (int i = 0; i < stars.size(); i++)
+    for (size_t i = 0; i < stars.size(); i++)
     {
             WORD charColor = 0x07;
             COORD temp;
@@ -948,7 +948,7 @@ void loseScreenInput() // get inputs to restart or quit - Faz
         currTime = defTime;
         en.push_back(new Player);
         en[0]->setSym(94);
-        en[0]->setspeed(0.1);
+        en[0]->setspeed(0.1f);
         en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         en[0]->setm_bActive(true);
@@ -981,7 +981,7 @@ void winScreenInput() // get inputs to restart or quit - Faz
         currTime = defTime;
         en.push_back(new Player);
         en[0]->setSym(94);
-        en[0]->setspeed(0.1);
+        en[0]->setspeed(0.1f);
         en[0]->setCoordX(g_Console.getConsoleSize().X / 2);
         en[0]->setCoordY(g_Console.getConsoleSize().Y / 2);
         en[0]->setm_bActive(true);
@@ -1092,7 +1092,7 @@ void displayError()
 }
 void enShoot()
 {
-    for (int i = 0; i < en.size(); i++)
+    for (size_t i = 0; i < en.size(); i++)
     {
         if (en[i]->getTag() == 'E')
         {
@@ -1122,7 +1122,7 @@ void createBullet(int x,int y,char t,int dir, int i)
 
 void moveEnemy()
 {
-    for (int i = 0; i < en.size(); i++)
+    for (size_t i = 0; i < en.size(); i++)
     {
         if (en[i]->getTag() == 'E')
         {
@@ -1145,7 +1145,7 @@ void moveEnemy()
 
 void moveBullet()
 {
-    for (int i = 0; i < en.size(); i++)
+    for (size_t i = 0; i < en.size(); i++)
     {
         if (en[i]->getTag() == 43 || en[i]->getTag() == 45)
         {
@@ -1181,13 +1181,13 @@ void spawnEnemy()
     }
     else
     {
-        spawnRate += 0.01;
+        spawnRate += 0.01f;
     }
 }
 
 void clearEnemy(int a)
 {
-    for (int i = a; i < en.size(); i++)
+    for (size_t i = a; i < en.size(); i++)
     {
         delete en[i];
     }
@@ -1424,7 +1424,7 @@ void renderMap() // renders map border - Faz
 
 void renderEntity()
 {
-    for (int i = 0; i < en.size(); i++)
+    for (size_t i = 0; i < en.size(); i++)
     {
         if (en[i]->getTag() != 'B')
         {
@@ -1532,7 +1532,7 @@ void renderFramerate()
 void renderInputEvents()
 {
     // keyboard events
-    COORD startPos = {50, 2};
+   /* COORD startPos = {50, 2};
     std::ostringstream ss;
     std::string key;
     for (int i = 0; i < K_COUNT; ++i)
@@ -1565,7 +1565,7 @@ void renderInputEvents()
 
         COORD c = { startPos.X, startPos.Y + i };
         g_Console.writeToBuffer(c, ss.str(), 0x17);
-    }
+    }*/
     
 }
 
@@ -1577,7 +1577,7 @@ void displayStats()
     std::string s;
     std::ostringstream ss;
 
-    int WS = floor(currTime);
+    int WS =int( floor(currTime));
     if (wave == 10)
     {
         if (en.size() > 1)
@@ -1642,7 +1642,7 @@ void displayWave()
     c.Y = 0;
     std::string s;
     std::ostringstream ss;
-    int WS = floor(wave);
+    int WS = wave;
     ss << " WAVE : " << std::to_string(WS) << " ";
     g_Console.writeToBuffer(c, ss.str(), 0x17);
 }
@@ -1650,5 +1650,5 @@ void displayWave()
 void updateWave()
 {
     wave++;
-    spawnCounter -= 0.01;
+    spawnCounter -= 0.01f;
 }
